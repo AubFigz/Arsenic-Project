@@ -184,34 +184,71 @@ window.openModal = function(pname, ci) {
    ══════════════════════════════════════════════════════════════*/
 function buildSigChart() {
   const el = document.getElementById('sig-chart');
-  if (!el) return;
-  const labels = CID.map(c => `${c}<br><span style="font-size:9px">${CLBL[c].split('—')[1]||CLBL[c].split(':')[1]||''}</span>`);
-  const vals = CID.map(c => SIG_COUNTS[c]);
-  const cols = CID.map(c => CCOL[c]);
-  Plotly.newPlot(el, [{
-    x: CID.map(c => SIG_COUNTS[c]),
-    y: CID,
-    type: 'bar',
-    orientation: 'h',
-    marker: {color: CID.map(c => CCOL[c]), opacity: 0.88,
-      line: {color: CID.map(c => CCOL[c]), width: 1.5}},
-    text: CID.map(c => SIG_COUNTS[c]),
-    textposition: 'outside',
-    hovertemplate: '<b>%{y}</b><br>%{x} significant pathways<extra></extra>',
-    cliponaxis: false,
-  }], {
-    xaxis: {title: 'Significant pathways (|NES| > 1.5, FDR < 0.25)', gridcolor: '#f1f5f9', zeroline: false, range: [0, 1150]},
+  if (!el || !window.GSEA_DATA) return;
+
+  // Compute direction split from live GSEA data
+  const posCount = {}, negCount = {};
+  CID.forEach(c => {
+    const ci = CID.indexOf(c);
+    const sigPWs = window.GSEA_DATA.pathways.filter(p => p.sig[ci]);
+    posCount[c] = sigPWs.filter(p => p.nes[ci] > 0).length;
+    negCount[c] = sigPWs.filter(p => p.nes[ci] < 0).length;
+  });
+
+  // Direction label depends on comparison type
+  const compType = {C1:'racial',C2:'racial',C11:'racial',C12:'racial',
+    C3:'nhw-ars',C4:'aa-ars',C5:'nhw-stem',C6:'aa-stem',
+    C7:'nhw-stem',C8:'aa-stem',C9:'nhw-stem-ars',C10:'aa-stem-ars'};
+  const posLabel = c => {
+    const t = compType[c];
+    if (t==='racial') return 'AA-enriched (NES > 0)';
+    if (t==='nhw-ars'||t==='aa-ars') return 'Arsenic-induced';
+    return 'Stem-enriched';
+  };
+
+  Plotly.newPlot(el, [
+    {
+      x: CID.map(c => posCount[c]),
+      y: CID,
+      type: 'bar', orientation: 'h',
+      name: '▲ Numerator-enriched (NES > 0)',
+      marker: { color: CID.map(c => CCOL[c]), opacity: 0.85 },
+      text: CID.map(c => posCount[c] > 0 ? posCount[c] : ''),
+      textposition: 'inside', insidetextanchor: 'middle',
+      hovertemplate: '<b>%{y}</b><br>Numerator-enriched: <b>%{x}</b><extra></extra>',
+      cliponaxis: false,
+    },
+    {
+      x: CID.map(c => negCount[c]),
+      y: CID,
+      type: 'bar', orientation: 'h',
+      name: '▼ Denominator-enriched (NES < 0)',
+      marker: { color: '#1d4ed8', opacity: 0.55 },
+      text: CID.map(c => negCount[c] > 0 ? negCount[c] : ''),
+      textposition: 'inside', insidetextanchor: 'middle',
+      hovertemplate: '<b>%{y}</b><br>Denominator-enriched: <b>%{x}</b><extra></extra>',
+      cliponaxis: false,
+    }
+  ], {
+    barmode: 'stack',
+    xaxis: {title: 'Significant pathways (|NES| > 1.5, FDR < 0.25)', gridcolor: '#f1f5f9', zeroline: false, range: [0, 1200]},
     yaxis: {autorange: 'reversed', tickfont: {size: 11}},
-    margin: {l: 55, r: 80, t: 20, b: 55},
+    margin: {l: 55, r: 90, t: 20, b: 55},
     height: 340,
     plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
     font: {family: 'Inter, sans-serif', size: 11},
-    shapes: [{type:'line',x0:71,x1:71,y0:-0.5,y1:11.5,line:{color:'#7c3aed',dash:'dot',width:1.5}},
-             {type:'line',x0:57,x1:57,y0:-0.5,y1:11.5,line:{color:'#7c3aed',dash:'dot',width:1.5}}],
+    legend: {orientation: 'h', y: -0.22, font: {size: 10}},
+    shapes: [
+      {type:'line',x0:71,x1:71,y0:-0.5,y1:11.5,line:{color:'#7c3aed',dash:'dot',width:1.5}},
+    ],
     annotations: [
       {x:71,y:0,text:'Racial\nbaseline',showarrow:false,font:{size:9,color:'#7c3aed'},xanchor:'left',yanchor:'bottom'},
-      {x:SIG_COUNTS['C2'],y:'C2',text:'\u2190 100% NHW direction',showarrow:false,font:{size:9,color:'#1d4ed8'},xanchor:'left',xshift:5},
-      {x:SIG_COUNTS['C3'],y:'C3',text:'2.1\u00d7 more than C4 \u2192 NHW more arsenic-primed (Theme 3)',showarrow:false,font:{size:8.5,color:'#0891b2'},xanchor:'left',xshift:5}
+      {x:(posCount['C2']||0)+(negCount['C2']||0),y:'C2',
+        text:' ← 100% NHW-enriched (arsenic homogenizes)',
+        showarrow:false,font:{size:9,color:'#1d4ed8'},xanchor:'left',xshift:4},
+      {x:(posCount['C3']||0)+(negCount['C3']||0),y:'C3',
+        text:' 2.1× more than C4 → NHW more arsenic-primed',
+        showarrow:false,font:{size:8.5,color:'#0891b2'},xanchor:'left',xshift:4},
     ]
   }, {responsive: true, displayModeBar: false});
 }
@@ -702,9 +739,9 @@ function buildClinical() {
   if (!el) return;
   const cards = [
     {icon:'💊',title:'ERCC1 as Biomarker',col:'#dc2626',bg:'#fee2e2',
-     body:'Low ERCC1 expression (as found in AA stem cells under arsenic) predicts elevated susceptibility to arsenic-induced mutagenesis. Conversely, high ERCC1 confers platinum chemotherapy resistance — making ERCC1 a dual biomarker of environmental vulnerability AND treatment resistance. ERCC1 protein levels are measurable by immunohistochemistry (IHC) in clinical tissue samples. Published studies in breast cancer demonstrate that low ERCC1 expression correlates with improved response to platinum-based chemotherapy (cisplatin, carboplatin). This suggests AA breast cancer patients with stem cell-enriched tumors may be selectively sensitive to platinum-based regimens — an actionable therapeutic hypothesis.'},
+     body:'ERCC1 is already a validated clinical biomarker in non-small cell lung cancer (NSCLC): ERCC1 IHC scoring is used to predict platinum chemotherapy resistance (IALT, JMEN, and TASTE trials established the association; ERCC1-negative tumors benefit more from cisplatin). This same IHC assay — ERCC1 protein detection in formalin-fixed paraffin-embedded tissue — is directly applicable to breast cancer specimens. The finding that ERCC1 mRNA is selectively suppressed in AA breast cancer stem cells under arsenic provides a transcriptomic basis for applying this clinically validated biomarker to a breast cancer disparities context. AA patients with stem cell-enriched tumors and arsenic exposure history may be selectively sensitive to platinum-based regimens (cisplatin, carboplatin) — an immediately actionable therapeutic hypothesis testable in existing tissue biobanks.'},
     {icon:'🌍',title:'Environmental Exposure Context',col:'#d97706',bg:'#fff7ed',
-     body:'Arsenic in drinking water affects millions of Americans, with particularly elevated levels in South Florida and other Southern states. These same communities show elevated rates of advanced breast cancer diagnosis in AA women. This study provides a mechanistic framework connecting environmental arsenic exposure to race-specific cancer stem cell vulnerability. Arsenic exposure is not hypothetical in the study population. Arsenic levels exceeding California\'s Public Health Goal have been documented in water supplies serving zip codes with elevated breast cancer incidence rates — including South Florida communities with high proportions of AA residents. The 0.3 µM dose used in this study falls within the range of chronic environmental exposure.'},
+     body:'Arsenic exposure is not hypothetical in the study population. In South Florida, water systems in Miami-Dade (ZIP codes 33030–33034, Homestead/Florida City area) and Palm Beach County communities have documented arsenic levels in the 5–15 µg/L range — approaching the EPA maximum contaminant level of 10 µg/L, and exceeding California\'s Public Health Goal of 0.004 µg/L. These same zip codes overlap with communities with elevated proportions of Black/AA residents and elevated Stage III–IV breast cancer incidence in Florida Cancer Data System (FCDS) reporting. The 0.3 µM arsenic dose used in this study (≈22 µg/L as As³⁺) models chronic environmental exposure, not pharmacological dosing. This creates a direct mechanistic link from tap water arsenic → cancer stem cell NER suppression → elevated mutagenic burden in the at-risk population.'},
     {icon:'🧬',title:'Health Disparities Framework',col:'#7c3aed',bg:'#f5f3ff',
      body:'AA women have 40% higher breast cancer mortality than NHW women despite lower incidence. This gene-environment interaction model — where racial cellular biology amplifies the impact of an environmental carcinogen specifically in cancer stem cells — provides a transcriptomic mechanism for understanding and ultimately addressing this disparity.'},
     {icon:'🔬',title:'Future Validation Targets',col:'#0891b2',bg:'#eff6ff',

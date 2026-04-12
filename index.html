@@ -122,6 +122,26 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 .stem-val-card{animation:fadeUp .5s ease both;}
 /* gene heatmap hover */
 #ner-gene-hm [onclick]:hover{transform:scale(1.08);box-shadow:0 3px 10px rgba(0,0,0,.22);z-index:10;position:relative;}
+/* Primary stat card — visual hierarchy */
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(220,38,38,.55);}70%{box-shadow:0 0 0 16px rgba(220,38,38,0);}100%{box-shadow:0 0 0 0 rgba(220,38,38,0);}}
+.primary-stat{animation:pulse-ring 2.8s ease-out infinite;background:linear-gradient(135deg,#fff5f5 0%,#fee2e2 100%)!important;border:1.5px solid #fca5a5!important;grid-column:span 2;}
+.primary-stat .val{font-size:2.4rem!important;color:var(--red)!important;}
+.primary-stat .lbl{font-size:.82rem!important;font-weight:500;}
+/* Heatmap primary cell (C8 KEGG NER) */
+@keyframes cell-glow{0%,100%{box-shadow:0 0 0 3px rgba(245,158,11,.55);}50%{box-shadow:0 0 0 7px rgba(245,158,11,.85);}}
+.primary-hm-cell{animation:cell-glow 2s ease-in-out infinite!important;outline:3px solid #f59e0b!important;z-index:5;position:relative!important;}
+.hm-star{position:absolute;top:-6px;right:-4px;font-size:10px;color:#f59e0b;line-height:1;pointer-events:none;}
+/* Section dot texture */
+.section-texture{background-image:radial-gradient(rgba(148,163,184,.13) 1px,transparent 1px);background-size:24px 24px;}
+/* Mobile desktop hint */
+.desktop-hint{display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:.75rem 1rem;font-size:.82rem;color:#92400e;margin-bottom:.8rem;}
+@media(max-width:768px){.desktop-hint{display:block!important;}.stats-row{grid-template-columns:repeat(2,1fr)!important;}.primary-stat{grid-column:span 2!important;}}
+/* Pathway table skeleton shimmer */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-row td{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:400% 100%;animation:shimmer 1.5s infinite linear;height:36px;border-radius:4px;}
+/* Methods floating action button */
+#methods-fab{position:fixed;bottom:1.5rem;right:1.5rem;background:#1e293b;color:#fff;padding:.5rem 1.1rem;border-radius:24px;font-size:.79rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:99;text-decoration:none;display:flex;align-items:center;gap:.35rem;transition:all .2s;border:1px solid rgba(255,255,255,.1);}
+#methods-fab:hover{background:#334155;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.32);}
 </style>
 </head>
 <body>
@@ -152,8 +172,44 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-inner">
+<!-- HOW TO READ THIS SITE -->
+<div style="background:#172554;border-bottom:1px solid rgba(255,255,255,.08);">
+  <div style="max-width:1200px;margin:0 auto;padding:.3rem 2rem;">
+    <details style="font-size:.81rem;color:#cbd5e1;">
+      <summary style="cursor:pointer;font-weight:600;color:#93c5fd;padding:.45rem 0;list-style:none;display:flex;align-items:center;gap:.45rem;">
+        <span style="font-size:.85rem;">📖</span> How to navigate this site &nbsp;&#9654;
+      </summary>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;padding:.8rem 0 .6rem;color:#94a3b8;line-height:1.5;">
+        <div><strong style="color:#93c5fd;">① Overview</strong><br>Stat cards + NES Heatmap. The gold-bordered −2.75 cell is the primary finding. Click any cell to open details.</div>
+        <div><strong style="color:#93c5fd;">② NER Story</strong><br>Use the NER Story nav dropdown for the step-by-step mechanistic narrative: XPC Paradox → NER Diagram → C11→C12 Trigger → Leading Edge.</div>
+        <div><strong style="color:#93c5fd;">③ GSEA Explorer</strong><br>Volcano, Waterfall, Bubble, Radar — all update when you change the comparison dropdown. C8 is the primary comparison.</div>
+        <div><strong style="color:#93c5fd;">④ Gene Browser</strong><br>Type any gene symbol to see its L2FC across all 12 comparisons. Click any gene name anywhere on the site for a popup.</div>
+        <div><strong style="color:#93c5fd;">⑤ All Pathways</strong><br>Browse or search all 3,758 pathways. Use "Sort by C8" to rank by the primary comparison. Click any NES cell for the pathway modal.</div>
+        <div><strong style="color:#93c5fd;">⑥ Methods</strong><br>Full experimental details in the accordion at the bottom. Or click the 📋 Methods button pinned to the lower right at any time.</div>
+      </div>
+    </details>
+  </div>
+</div>
+<div class="hero" style="background:linear-gradient(135deg,#1e1b4b 0%,#172554 55%,#0f2a5e 100%);position:relative;overflow:hidden;">
+  <!-- Molecular dot-grid overlay -->
+  <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px);background-size:30px 30px;opacity:.22;pointer-events:none;"></div>
+  <!-- Decorative NER network silhouette (top-right) -->
+  <svg style="position:absolute;right:1.5rem;bottom:1rem;opacity:.09;pointer-events:none;" width="210" height="160" viewBox="0 0 210 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="30" r="20" fill="white"/><text x="40" y="34" text-anchor="middle" font-size="9" fill="#1e1b4b" font-weight="700" font-family="sans-serif">XPC</text>
+    <circle cx="105" cy="80" r="24" fill="white"/><text x="105" y="84" text-anchor="middle" font-size="9.5" fill="#1e1b4b" font-weight="800" font-family="sans-serif">ERCC1</text>
+    <circle cx="170" cy="30" r="20" fill="white"/><text x="170" y="34" text-anchor="middle" font-size="9" fill="#1e1b4b" font-weight="700" font-family="sans-serif">CDK7</text>
+    <circle cx="160" cy="140" r="18" fill="white"/><text x="160" y="144" text-anchor="middle" font-size="9" fill="#1e1b4b" font-weight="700" font-family="sans-serif">PCNA</text>
+    <circle cx="50" cy="140" r="18" fill="white"/><text x="50" y="144" text-anchor="middle" font-size="9" fill="#1e1b4b" font-weight="700" font-family="sans-serif">DDB1</text>
+    <circle cx="105" cy="22" r="14" fill="white"/><text x="105" y="26" text-anchor="middle" font-size="8" fill="#1e1b4b" font-weight="700" font-family="sans-serif">RPA2</text>
+    <line x1="40" y1="50" x2="85" y2="70" stroke="white" stroke-width="1.5"/>
+    <line x1="170" y1="50" x2="125" y2="70" stroke="white" stroke-width="1.5"/>
+    <line x1="50" y1="122" x2="85" y2="96" stroke="white" stroke-width="1.5"/>
+    <line x1="160" y1="122" x2="125" y2="96" stroke="white" stroke-width="1.5"/>
+    <line x1="40" y1="30" x2="91" y2="22" stroke="white" stroke-width="1"/>
+    <line x1="170" y1="30" x2="119" y2="22" stroke="white" stroke-width="1"/>
+    <line x1="105" y1="36" x2="105" y2="56" stroke="white" stroke-width="1"/>
+  </svg>
+  <div class="hero-inner" style="position:relative;z-index:1;">
     <h1>Arsenic Selectively Suppresses Nucleotide Excision Repair in African American Breast Cancer Stem Cells</h1>
     <p>Transcriptome-wide profiling of BRL-23 (NHW) and BRL-24 (AA) breast tissue-derived cell lines across parental and CD24&minus;/CD49f+/CD44+ cancer stem cell populations under vehicle and chronic low-dose arsenic trioxide (0.3 &mu;M, 14 days).</p>
     <div class="hero-badges">
@@ -176,12 +232,16 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 
 <!-- OVERVIEW -->
 <div id="overview" class="section">
-  <div class="stats-row">
-    <div class="stat-card hl"><span class="val">&minus;2.75</span><span class="lbl">NES: KEGG NER in AA Stem+Arsenic (C8)</span></div>
+  <div class="stats-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));">
+    <div class="stat-card hl primary-stat">
+      <span class="val">&minus;2.75</span>
+      <span class="lbl">NES: KEGG NER in AA Stem+Arsenic (C8) — Primary finding</span>
+      <div style="margin-top:.5rem;font-size:.72rem;color:#dc2626;font-weight:600;">★ C8 vs C7: +0.86 — race-specific</div>
+    </div>
     <div class="stat-card"><span class="val">+0.86</span><span class="lbl">NES: KEGG NER in NHW Stem+Arsenic (C7)</span></div>
     <div class="stat-card"><span class="val">10&times;</span><span class="lbl">Amplification of racial differences in stem vs parental cells</span></div>
     <div class="stat-card"><span class="val">68%</span><span class="lbl">Collapse in racial DEGs under arsenic (parental cells)</span></div>
-    <div class="stat-card"><span class="val">ERCC1</span><span class="lbl">Primary candidate &mdash; suppressed in all 4 AA stem comparisons</span></div>
+    <div class="stat-card"><span class="val">ERCC1</span><span class="lbl">Primary candidate — stem cell NER marker, amplified in AA</span></div>
     <div class="stat-card"><span class="val">16</span><span class="lbl">Leading edge genes in C8 NER suppression (KEGG)</span></div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
@@ -281,7 +341,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 </div>
 
 <!-- NES HEATMAP -->
-<div style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
+<div class="section-texture" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
 <div id="heatmap" class="section" style="padding:0;max-width:1200px;">
   <div class="section-header">
     <h2>NES Heatmap &mdash; Key Pathways</h2>
@@ -296,12 +356,13 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     </div>
     <div class="nesbar"><span>&minus;3</span><div class="bar"></div><span>+3</span></div>
   </div>
+  <div class="desktop-hint">&#9888; The NES heatmap is best viewed on desktop — scroll horizontally on smaller screens.</div>
   <div class="hm-wrap" id="hm-wrap"></div>
 </div>
 </div>
 
 <!-- STEM VALIDATION + PCA -->
-<div id="stem-val" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
+<div id="stem-val" class="section-texture" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
 <div class="section" style="padding:0;max-width:1200px;">
   <div class="section-header">
     <h2>Stem Cell Identity Validation</h2>
@@ -420,6 +481,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
       <div class="nesbar"><span style="font-size:.73rem;">Suppressed</span><div class="bar"></div><span style="font-size:.73rem;">Induced</span></div>
       <span style="font-size:.75rem;color:var(--text2);">Dashed border = FDR &lt; 0.05</span>
     </div>
+    <div class="desktop-hint">&#9888; The interactive NER diagram works best on desktop. On small screens the gene boxes may overlap.</div>
     <div id="ner-wrap" style="overflow-x:auto;"></div>
   </div>
 </div>
@@ -500,7 +562,16 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   <div style="overflow-x:auto;max-height:580px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
     <table class="pathway-table" id="pw-table">
       <thead><tr><th>Pathway</th><th>DB</th><th style="color:#7c3aed;">C1</th><th style="color:#7c3aed;">C2</th><th style="color:#0891b2;">C3</th><th style="color:#dc2626;">C4</th><th style="color:#1d4ed8;">C5</th><th style="color:#db2777;">C6</th><th style="color:#0891b2;">C7</th><th style="color:#dc2626;">C8</th><th style="color:#1d4ed8;">C9</th><th style="color:#db2777;">C10</th><th style="color:#7c3aed;">C11</th><th style="color:#7c3aed;">C12</th></tr></thead>
-      <tbody id="pw-tbody"></tbody>
+      <tbody id="pw-tbody">
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+        <tr class="skeleton-row"><td colspan="14" style="padding:.4rem .3rem;"></td></tr>
+      </tbody>
     </table>
   </div>
   <div style="display:flex;gap:.5rem;align-items:center;margin-top:.7rem;">
@@ -623,7 +694,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C12" onchange="buildRadar()"> <span style="color:#7c3aed;">C12 Racial Stem (Arsenic)</span></label>
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C5" onchange="buildRadar()"> <span style="color:#1d4ed8;">C5 NHW Stem (no Ars)</span></label>
     </div>
-    <div id="radar-plot" style="height:460px;"></div>
+    <div class="desktop-hint">&#9888; This radar chart works best on a desktop screen (768px+). On mobile it may be difficult to read the axis labels.</div>
+  <div id="radar-plot" style="height:460px;"></div>
   </div>
 </div>
 </div>
@@ -864,10 +936,12 @@ function buildHM(){
       const sig=Math.abs(nes||0)>1.5&&fdr!=null&&fdr<0.25;
       const ns=nes!=null?nes.toFixed(2):'';
       const fs=fdr!=null?(fdr<0.001?'<0.001':fdr.toFixed(3)):'NA';
-      html+=`<div class="hm-cell ${sig?'sig':''}" style="background:${nesCol(nes)};"
+      const isPrimary = kp.n==='KEGG_NUCLEOTIDE_EXCISION_REPAIR' && i===7;
+      html+=`<div class="hm-cell ${sig?'sig':''} ${isPrimary?'primary-hm-cell':''}" style="background:${nesCol(nes)};"
         data-n="${kp.n}" data-i="${i}" data-ns="${ns}" data-fs="${fs}" data-c="C${i+1}"
         onmouseenter="showTip(event,this)" onmouseleave="hideTip()"
         onclick="openModal('${kp.n}',${i})">
+        ${isPrimary?'<span class="hm-star">★</span>':''}
         <span style="color:${Math.abs(nes||0)>1?'white':'#374151'};font-size:.66rem;">${ns}</span>
       </div>`;
     });
@@ -958,6 +1032,27 @@ function renderVolcano(){
     });
     traces.push({x,y,text:txt,mode:'markers',marker:{color:col,size:sz,opacity:0.82},name:cd.name,type:'scatter',hovertemplate:'%{text}<extra></extra>'});
   });
+  // Labeled key genes — smart position assignment to reduce overlap
+  const labelGenes=['ERCC1','XPC','CDK7','DDB1','CETN2','RAD23A','ERCC3','GTF2H1','CCNH','LIG1','PCNA','RFC2','RPA3','HMOX1','SNAI2','ALDH1A3'];
+  const lx=[],ly=[],lt=[],lpos=[],lcol=[];
+  // Sort by x so alternating top/bottom assigns to spatially spread genes
+  const lSorted=labelGenes.slice().sort((a,b)=>{
+    const ga=gs[a],gb=gs[b];return ((ga&&ga.l)||0)-((gb&&gb.l)||0);});
+  lSorted.forEach((gn,idx)=>{
+    const gd=gs[gn];if(!gd||gd.l==null||gd.p==null)return;
+    const nlp=gd.p>0?-Math.log10(gd.p):6.5;
+    if(nlp<1)return; // skip low-significance genes
+    lx.push(gd.l);ly.push(nlp);lt.push(gn);
+    const isLeft=gd.l<0;
+    const alt=idx%2===0;
+    lpos.push(isLeft?(alt?'top left':'bottom left'):(alt?'top right':'bottom right'));
+    lcol.push(gCat(gn)==='ner'?'#1d4ed8':gCat(gn)==='stem'?'#db2777':gCat(gn)==='arsenic'?'#16a34a':'#64748b');
+  });
+  if(lx.length){
+    traces.push({x:lx,y:ly,text:lt,mode:'text',type:'scatter',
+      textfont:{size:9,color:lcol,family:'Inter,sans-serif'},
+      textposition:lpos,showlegend:false,hoverinfo:'skip',cliponaxis:false});
+  }
   const fL=-Math.log10(0.05);
   Plotly.newPlot('volcano-plot',traces,{
     xaxis:{title:'Shrunken log₂ fold change',zeroline:true,zerolinecolor:'#94a3b8'},
@@ -1175,6 +1270,24 @@ window.showPWStory = function(name, btn) {
   if (name === 'withinstem' && !window._ws_built) { buildWithinStemPanel(); window._ws_built = true; }
 };
 
+// Keyboard arrow navigation for comparison selectors
+function addArrowNav(el) {
+  if (!el) return;
+  el.title = (el.title||'') + ' (← → arrow keys to navigate)';
+  el.addEventListener('keydown', function(e) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const len = this.options.length;
+    this.selectedIndex = e.key === 'ArrowRight'
+      ? Math.min(this.selectedIndex + 1, len - 1)
+      : Math.max(this.selectedIndex - 1, 0);
+    this.dispatchEvent(new Event('change'));
+  });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  ['v-comp','ner-comp','wf-comp','bubble-comp','gsea-vol-comp','inflam-comp'].forEach(id => addArrowNav(document.getElementById(id)));
+});
+
 // Nav dropdown toggle
 function toggleNavDrop(btn) {
   const menu = btn.nextElementSibling;
@@ -1232,6 +1345,27 @@ window.addEventListener('scroll',function(){
   </div>
 </div>
 </div>
+
+<!-- CITATION CARD -->
+<div style="background:linear-gradient(135deg,#1e1b4b 0%,#172554 100%);color:#e2e8f0;padding:2.5rem 2rem;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 style="font-size:1.1rem;font-weight:700;color:#93c5fd;margin-bottom:1rem;">Cite This Work</h2>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1.2rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;color:#cbd5e1;margin-bottom:.9rem;">
+      [Authors]. (2025). Arsenic trioxide selectively suppresses nucleotide excision repair in African American breast cancer stem cells: a transcriptome-wide analysis.
+      <em style="color:#93c5fd;">Journal TBD</em>.
+      DOI: <span style="color:#fbbf24;">[Pending publication]</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;font-size:.79rem;color:#94a3b8;">
+      <div><span style="color:#93c5fd;font-weight:600;">Dataset:</span> DESeq2 · 16,682 genes · 12 comparisons</div>
+      <div><span style="color:#93c5fd;font-weight:600;">GSEA:</span> GSEAPreranked v4.4.0 · 4 MSigDB databases · 48 runs</div>
+      <div><span style="color:#93c5fd;font-weight:600;">Cell lines:</span> BRL-23 (NHW) &amp; BRL-24 (AA) mammoplasty-derived</div>
+      <div><span style="color:#93c5fd;font-weight:600;">Exposure:</span> 0.3 µM arsenite · 14 days · LC₁₀ dose</div>
+    </div>
+  </div>
+</div>
+
+<!-- METHODS FAB -->
+<a href="#methods" id="methods-fab">&#128203; Methods</a>
 
 <!-- GENE POPUP MODAL -->
 <div class="gpop-modal" id="gpop-modal" onclick="if(event.target===this)closeGPop()">

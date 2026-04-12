@@ -227,14 +227,27 @@ function buildRadar() {
 
   Plotly.newPlot(el, traces, {
     polar: {
-      radialaxis:{ visible:true, range:[-3.5,3.5], tickfont:{size:8}, dtick:1,
-                   gridcolor:'#e2e8f0', linecolor:'#cbd5e1' },
+      radialaxis:{
+        visible: true, range: [-3.5, 3.5],
+        tickfont: {size: 9, color: '#94a3b8'},
+        dtick: 0.5,
+        tickvals: [-3, -2, -1.5, -1, 0, 1, 1.5, 2, 3],
+        ticktext: ['-3', '-2', '★-1.5', '-1', '0', '1', '★1.5', '2', '3'],
+        gridcolor: '#e2e8f0', linecolor: '#cbd5e1',
+        showticklabels: true, tickangle: 0,
+        layer: 'above traces'
+      },
       angularaxis:{ tickfont:{size:9.5}, gridcolor:'#e2e8f0' }
     },
-    legend:{ orientation:'h', y:-0.12 },
-    margin:{ l:60,r:60,t:40,b:60 }, height:440,
+    shapes: [
+      // significance threshold rings at ±1.5
+      {type:'circle',xref:'paper',yref:'paper',x0:0,y0:0,x1:1,y1:1,
+       line:{color:'#f59e0b',width:1,dash:'dot'},layer:'below'}
+    ],
+    legend:{ orientation:'h', y:-0.15 },
+    margin:{ l:60,r:60,t:50,b:70 }, height:460,
     paper_bgcolor:'#fff', font: PLOT_FONT,
-    title:{ text:'Pathway Category Profile (Mean Peak NES)', font:{size:11} }
+    title:{ text:'Pathway Category Profile (Mean Peak |NES|) — ★ marks ±1.5 significance threshold', font:{size:10} }
   }, { responsive:true, displayModeBar:false });
 }
 

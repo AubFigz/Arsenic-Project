@@ -581,9 +581,11 @@ function buildPathwayOverlapMatrix() {
                 const isDiag = i === j;
                 const intensity = isDiag ? 1 : (maxOverlap > 0 ? overlap / maxOverlap : 0);
                 const bg = isDiag ? '#1e293b' :
-                  overlap === 0 ? '#f8fafc' :
-                  `rgba(29,78,216,${0.1 + intensity * 0.7})`;
-                const textCol = isDiag ? '#fff' : intensity > 0.5 ? '#fff' : '#1e293b';
+                  overlap === 0 ? '#ffffff' :
+                  `rgba(29,78,216,${0.08 + intensity * 0.78})`;
+                const textCol = isDiag ? '#fff' :
+                  overlap === 0 ? '#d1d5db' :
+                  intensity > 0.45 ? '#fff' : '#1e293b';
                 const sa = new Set(LE_SETS[rowKey].genes);
                 const sb = new Set(LE_SETS[colKey].genes);
                 const sharedGenes = [...sa].filter(g => sb.has(g)).join(', ');
