@@ -84,6 +84,47 @@ function buildGSEAVolcano() {
 }
 
 /* ══════════════════════════════════════════════════════════
+   1b. C8 FULL PROFILE — Top Significant Pathways
+   ══════════════════════════════════════════════════════════ */
+function buildC8Profile() {
+  const el = document.getElementById('c8-profile-wrap');
+  if (!el || !window.GSEA_DATA) return;
+  const ci = CID.indexOf('C8');
+  const sig = GSEA_DATA.pathways
+    .filter(p => p.sig[ci])
+    .sort((a,b) => Math.abs(b.nes[ci]) - Math.abs(a.nes[ci]))
+    .slice(0, 12);
+
+  const labels = sig.map(p => p.name.replace(/^(KEGG_|REACTOME_|HALLMARK_|BENPORATH_|PECE_|KAN_)/,'').replace(/_/g,' ').substring(0,50));
+  const vals = sig.map(p => p.nes[ci]);
+  const cols = vals.map(v => v < 0 ? '#1d4ed8' : '#dc2626');
+  const names = sig.map(p => p.name);
+
+  Plotly.newPlot(el, [{
+    y: labels, x: vals, type:'bar', orientation:'h',
+    marker: { color: cols, opacity: 0.85 },
+    text: vals.map(v => (v>0?'+':'')+v.toFixed(2)),
+    textposition: 'outside',
+    customdata: names,
+    hovertemplate: '<b>%{y}</b><br>NES: %{x:.3f}<extra></extra>',
+    cliponaxis: false
+  }], {
+    xaxis: { title:'NES', zeroline:true, zerolinecolor:'#94a3b8', gridcolor:'#f1f5f9',
+             range:[Math.min(...vals)-0.3, Math.max(...vals)+0.3] },
+    yaxis: { autorange:'reversed', tickfont:{size:9.5} },
+    margin: { l:320, r:70, t:30, b:50 }, height: 400,
+    plot_bgcolor:'#fafafa', paper_bgcolor:'#fff',
+    font: { family:'Inter,sans-serif', size:11 },
+    title: { text:'Top 12 Significant Pathways — C8: AA Stem vs Parental (Arsenic)', font:{size:11} }
+  }, { responsive:true, displayModeBar:false });
+
+  el.on('plotly_click', data => {
+    const pt = data.points[0];
+    if (pt && pt.customdata && typeof openModal==='function') openModal(pt.customdata, ci);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
    2. WATERFALL CHART  (top/bottom 20 NES, any comparison)
    ══════════════════════════════════════════════════════════ */
 function buildWaterfall() {
@@ -337,6 +378,52 @@ function buildNERTrigger() {
   </div>`;
 
   el.innerHTML = html;
+
+  // Add comparative chart container
+  const chartDiv = document.createElement('div');
+  chartDiv.style.marginTop = '1rem';
+  el.appendChild(chartDiv);
+
+  // Build data for 10 representative pathways
+  const compPWs = [
+    'KEGG_NUCLEOTIDE_EXCISION_REPAIR',
+    'HALLMARK_G2M_CHECKPOINT',
+    'HALLMARK_E2F_TARGETS',
+    'HALLMARK_MYC_TARGETS_V1',
+    'HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION',
+    'HALLMARK_OXIDATIVE_PHOSPHORYLATION',
+    'HALLMARK_INFLAMMATORY_RESPONSE',
+    'HALLMARK_HEDGEHOG_SIGNALING',
+    'KAN_RESPONSE_TO_ARSENIC_TRIOXIDE',
+    'REACTOME_BASE_EXCISION_REPAIR'
+  ];
+  const ci11 = CID.indexOf('C11'), ci12 = CID.indexOf('C12');
+  const pwLabels = compPWs.map(n => n.replace(/^(KEGG_|REACTOME_|HALLMARK_|KAN_)/,'').replace(/_/g,' ').substring(0,32));
+  const c11vals = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? (p.nes[ci11]||0) : 0; });
+  const c12vals = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? (p.nes[ci12]||0) : 0; });
+
+  Plotly.newPlot(chartDiv, [
+    { x: pwLabels, y: c11vals, type:'bar', name:'C11: Stem, No Arsenic',
+      marker:{color:'#7c3aed',opacity:0.75}, hovertemplate:'<b>%{x}</b><br>C11 NES: %{y:.2f}<extra></extra>' },
+    { x: pwLabels, y: c12vals, type:'bar', name:'C12: Stem + Arsenic',
+      marker:{color:'#dc2626',opacity:0.75}, hovertemplate:'<b>%{x}</b><br>C12 NES: %{y:.2f}<extra></extra>' }
+  ], {
+    barmode: 'group',
+    xaxis: { tickangle: -32, tickfont:{size:8.5}, gridcolor:'#f1f5f9' },
+    yaxis: { title:'NES', zeroline:true, zerolinecolor:'#94a3b8', gridcolor:'#f1f5f9',
+             range:[-3.5,3.5] },
+    shapes: [
+      {type:'line',x0:-0.5,x1:9.5,y0:1.5,y1:1.5,line:{color:'#f59e0b',dash:'dot',width:1}},
+      {type:'line',x0:-0.5,x1:9.5,y0:-1.5,y1:-1.5,line:{color:'#f59e0b',dash:'dot',width:1}},
+    ],
+    annotations: [{x:0,y:-1.87,text:'NER: only pathway<br>that switches!',showarrow:true,arrowhead:2,
+      font:{size:9,color:'#dc2626'},ax:60,ay:0,arrowcolor:'#dc2626'}],
+    legend:{orientation:'h',y:-0.35},
+    margin:{l:55,r:20,t:35,b:110}, height:380,
+    plot_bgcolor:'#fafafa', paper_bgcolor:'#fff',
+    font:{family:'Inter,sans-serif',size:11},
+    title:{text:'C11 vs C12: NER is the ONLY pathway switching from non-significant to significant when arsenic is added',font:{size:10}}
+  },{responsive:true,displayModeBar:false});
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -556,16 +643,12 @@ function buildERCC1Panel() {
   if (!el) return;
   const dl = _gwLook();
 
-  // AA stem comparisons (all 4)
-  const aaComps = [
-    { cid:'C5', label:'C5: AA Stem vs Parental\n(Vehicle)', col:'#db2777' },
-    { cid:'C6', label:'C6: AA Stem vs Parental\n(Arsenic→Parental Veh)', col:'#db2777' },
-    { cid:'C8', label:'C8: AA Stem vs Parental\n(Arsenic) ★', col:'#dc2626' },
-    { cid:'C10',label:'C10: AA Stem Arsenic\nvs Vehicle', col:'#dc2626' },
-  ];
-  const nhwComps = [
-    { cid:'C7', label:'C7: NHW Stem vs Parental (Arsenic)', col:'#0891b2' },
-    { cid:'C9', label:'C9: NHW Stem Arsenic vs Vehicle', col:'#0891b2' },
+  // Stem vs parental comparisons C5-C8
+  const comps = [
+    { cid:'C5', label:'C5: NHW Stem vs Parental (No Arsenic)', col:'#0891b2', race:'NHW' },
+    { cid:'C6', label:'C6: AA Stem vs Parental (No Arsenic)',  col:'#db2777', race:'AA'  },
+    { cid:'C7', label:'C7: NHW Stem vs Parental (Arsenic)',    col:'#06b6d4', race:'NHW' },
+    { cid:'C8', label:'C8: AA Stem vs Parental (Arsenic) ★',  col:'#dc2626', race:'AA'  },
   ];
 
   const getData = (cid, gene) => {
@@ -573,28 +656,27 @@ function buildERCC1Panel() {
     return g || null;
   };
 
-  const allComps = [...aaComps.map(c=>({...c,race:'AA'})), ...nhwComps.map(c=>({...c,race:'NHW'}))];
   const maxL = 0.8;
 
   let html = `<div style="margin-bottom:.8rem;font-size:.82rem;color:#64748b;">
-    ERCC1 shrunken log₂FC in all AA and NHW stem comparisons. AA cells show consistent suppression across all 4 comparisons; NHW cells show no significant change.</div>`;
-  html += `<div style="display:grid;grid-template-columns:220px 1fr 70px 70px;gap:.35rem;align-items:center;">`;
+    ERCC1 L2FC across stem vs parental comparisons (C5–C8). Consistently suppressed in AA stem (C6, C8); not suppressed in NHW stem (C5, C7). L2FC range: −0.44 to −0.67 in AA.</div>`;
+  html += `<div style="display:grid;grid-template-columns:260px 1fr 70px 70px;gap:.35rem;align-items:center;">`;
   html += `<div style="font-weight:700;font-size:.73rem;color:#64748b;border-bottom:2px solid #e2e8f0;padding:.25rem 0;">Comparison</div>
     <div style="font-weight:700;font-size:.73rem;color:#64748b;border-bottom:2px solid #e2e8f0;padding:.25rem 0;">ERCC1 L2FC</div>
     <div style="font-weight:700;font-size:.73rem;color:#64748b;border-bottom:2px solid #e2e8f0;text-align:center;">FDR</div>
     <div style="font-weight:700;font-size:.73rem;color:#64748b;border-bottom:2px solid #e2e8f0;text-align:center;">Sig</div>`;
 
-  allComps.forEach(c => {
+  comps.forEach(c => {
     const d = getData(c.cid,'ERCC1');
     const l = d?d.l:null, f = d?d.f:null;
     const sig = f!=null&&f<0.05;
     const pct = l!=null?Math.min(Math.abs(l)/maxL*45,45):0;
     const isPos = l!=null&&l>=0;
-    const bg = c.race==='AA'&&sig ? '#fff7ed' : '#fafafa';
-    html += `<div style="padding:.35rem .4rem;background:${bg};border-radius:4px 0 0 4px;font-size:.77rem;font-weight:${c.race==='AA'?600:400};color:${c.col};">${c.label.replace('\n',': ')}</div>
+    const bg = c.race==='AA' ? '#fff0f6' : '#f0f9ff';
+    html += `<div style="padding:.35rem .4rem;background:${bg};border-radius:4px 0 0 4px;font-size:.77rem;font-weight:600;color:${c.col};">${c.label}</div>
     <div style="background:${bg};padding:.35rem .25rem;">
       <div style="display:flex;align-items:center;gap:.3rem;">
-        <span style="font-size:.72rem;color:#64748b;width:24px;text-align:right;">${c.race}</span>
+        <span style="font-size:.72rem;color:#64748b;width:30px;text-align:right;font-weight:700;">${c.race}</span>
         <div style="flex:1;height:12px;background:#f1f5f9;border-radius:3px;position:relative;">
           <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#cbd5e1;"></div>
           ${l!=null?`<div style="position:absolute;top:1px;bottom:1px;${isPos?'left:50%':'right:50%'};width:${pct}%;background:${isPos?'#ef4444':'#3b82f6'};border-radius:2px;opacity:${sig?1:.5};"></div>`:''}
@@ -607,7 +689,7 @@ function buildERCC1Panel() {
   });
   html += `</div>
   <div style="margin-top:.9rem;padding:.7rem;background:#fee2e2;border-radius:8px;border-left:3px solid #dc2626;font-size:.81rem;color:#374151;">
-    <strong>ERCC1 summary:</strong> Suppressed in all 4 AA stem comparisons (C5, C6, C8, C10), L2FC ranging from −0.44 to −0.67, all FDR &lt; 0.05. No significant change in NHW stem comparisons (C7, C9). <strong>ERCC1 is the single most reproducible gene-level marker of race-specific NER disparity in this dataset.</strong>
+    <strong>ERCC1 summary:</strong> Consistently suppressed in AA stem cells in C6 and C8 (stem vs parental, −0.44 to −0.67, FDR &lt; 0.05). NHW stem cells (C5, C7) show no significant ERCC1 suppression. The racial contrast is present without arsenic and amplified by it. <strong>ERCC1 is the single most reproducible gene-level marker of race-specific NER disparity in this dataset.</strong>
   </div>`;
   el.innerHTML = html;
 }
@@ -807,6 +889,7 @@ function buildWithinStemPanel() {
 function setupViz2Observers() {
   const builds = {
     'gsea-vol-plot':   ()=>buildGSEAVolcano(),
+    'c8-profile-wrap': ()=>buildC8Profile(),
     'waterfall-plot':  ()=>buildWaterfall(),
     'radar-plot':      ()=>buildRadar(),
     'bubble-plot':     ()=>buildBubble(),

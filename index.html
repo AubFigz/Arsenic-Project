@@ -360,6 +360,35 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   <div class="card" id="xpc-paradox"></div>
 </div>
 
+<!-- CDK7 CROSS-FUNCTIONAL PANEL -->
+<div style="padding:0 2rem 2.5rem;max-width:1200px;margin:0 auto;">
+  <div class="card" data-reveal>
+    <h3 style="font-size:.9rem;font-weight:700;margin-bottom:.3rem;">CDK7 — At the Intersection of NER and Cell Cycle Control</h3>
+    <p style="font-size:.8rem;color:var(--text2);margin-bottom:.8rem;">CDK7 is the catalytic kinase subunit of the TFIIH complex and therefore required for both Nucleotide Excision Repair (helicase loading) and RNA Pol II transcription initiation. It is also a cell cycle kinase (CDK-activating kinase, CAK). This dual role means CDK7 suppression in AA stem cells simultaneously impairs NER, transcription, and cell cycle checkpoints. CDK7 shows consistent downregulation in AA stem cells across C5–C8 (L2FC −0.39 to −0.61, FDR &lt; 0.05), appearing in the C8 NER leading edge.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+      <div style="background:#dbeafe;border-radius:10px;padding:.9rem;border-left:4px solid #1d4ed8;">
+        <div style="font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em;">NER Role</div>
+        <div style="font-size:.82rem;color:#1e293b;font-weight:600;">TFIIH Kinase Subunit</div>
+        <div style="font-size:.77rem;color:#475569;margin-top:.3rem;">Phosphorylates XPB (ERCC3) to open DNA helix at damage site. Without CDK7, TFIIH cannot load and the dual-incision reaction cannot initiate.</div>
+      </div>
+      <div style="background:#dcfce7;border-radius:10px;padding:.9rem;border-left:4px solid #16a34a;">
+        <div style="font-size:.72rem;font-weight:700;color:#14532d;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em;">Stemness Role</div>
+        <div style="font-size:.82rem;color:#1e293b;font-weight:600;">CDK-Activating Kinase (CAK)</div>
+        <div style="font-size:.77rem;color:#475569;margin-top:.3rem;">Activates CDK1, CDK2, CDK4, CDK6 by T-loop phosphorylation. Suppression impairs all major CDK functions — yet stem cells paradoxically maintain their proliferative signature (G2M NES = −2.47 in C8, suggesting mitotic stress not quiescence).</div>
+      </div>
+      <div style="background:#fef3c7;border-radius:10px;padding:.9rem;border-left:4px solid #f59e0b;">
+        <div style="font-size:.72rem;font-weight:700;color:#92400e;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em;">Clinical Relevance</div>
+        <div style="font-size:.82rem;color:#1e293b;font-weight:600;">Actionable Therapeutic Target</div>
+        <div style="font-size:.77rem;color:#475569;margin-top:.3rem;">CDK7 inhibitors (THZ1, SY-1365) are in clinical trials. The co-suppression of CDK7 with other NER factors in AA stem cells may predict synthetic lethality with CDK7 inhibition in this cellular context.</div>
+      </div>
+    </div>
+    <div style="margin-top:.8rem;background:#f8fafc;border-radius:8px;padding:.7rem;font-size:.78rem;color:#475569;">
+      <strong>L2FC in AA stem comparisons:</strong> C5: −0.39 | C6: −0.51 | C7: −0.44 | C8: −0.61 (FDR &lt; 0.05 in C6, C7, C8) &bull;
+      <button onclick="setG&&setG('CDK7')" style="background:none;border:none;color:#1d4ed8;cursor:pointer;font-family:inherit;font-size:.78rem;text-decoration:underline;">View in Gene Browser →</button>
+    </div>
+  </div>
+</div>
+
 <!-- GENE BROWSER -->
 <div id="genes" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
 <div class="section" style="padding:0;max-width:1200px;">
@@ -464,6 +493,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     <select id="pw-db" onchange="filterPW()"><option value="">All databases</option><option>Hallmark</option><option>KEGG</option><option>Reactome</option><option>CGP</option></select>
     <select id="pw-sig" onchange="filterPW()"><option value="sig" selected>Significant only (|NES|&gt;1.5, FDR&lt;0.25)</option><option value="all">All pathways (3,758)</option></select>
     <select id="pw-cmp" onchange="filterPW()"><option value="">Any comparison</option></select>
+    <button class="btn btn-o" onclick="sortPWByC8()" style="font-size:.8rem;">Sort by C8 significance</button>
+    <button class="btn btn-o" onclick="sortPWReset()" style="font-size:.8rem;">Reset sort</button>
     <span id="pw-cnt" style="font-size:.8rem;color:var(--text2);"></span>
   </div>
   <div style="overflow-x:auto;max-height:580px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
@@ -520,6 +551,13 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
       </select>
     </div>
     <div id="gsea-vol-plot" style="height:520px;"></div>
+  </div>
+
+  <!-- C8 Full Profile -->
+  <div class="card" style="margin-bottom:1.5rem;" data-reveal>
+    <h3 style="font-size:.9rem;font-weight:700;margin-bottom:.3rem;">C8 Full Profile — Top Significant Pathways</h3>
+    <p style="font-size:.8rem;color:var(--text2);margin-bottom:.8rem;">The 10 most significant pathways in C8 (AA Stem vs Parental, Arsenic) ranked by |NES|. NER suppression is the primary finding but C8 also shows strong stemness activation, metabolic reprogramming, and cell cycle dysregulation.</p>
+    <div id="c8-profile-wrap"></div>
   </div>
 
   <!-- Waterfall — full width -->
@@ -580,8 +618,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C8" checked onchange="buildRadar()"> <span style="color:#dc2626;">C8 AA Stem (Arsenic) &#9733;</span></label>
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C1" checked onchange="buildRadar()"> <span style="color:#7c3aed;">C1 AA vs NHW Parental (no Ars)</span></label>
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C11" checked onchange="buildRadar()"> <span style="color:#7c3aed;">C11 Racial Stem (no Ars)</span></label>
-      <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C3" onchange="buildRadar()"> <span style="color:#0891b2;">C3 NHW Parental Arsenic vs Ctrl</span></label>
-      <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C4" onchange="buildRadar()"> <span style="color:#dc2626;">C4 AA Parental Arsenic vs Ctrl</span></label>
+      <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C3" checked onchange="buildRadar()"> <span style="color:#0891b2;">C3 NHW Parental Arsenic vs Ctrl</span></label>
+      <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C4" checked onchange="buildRadar()"> <span style="color:#dc2626;">C4 AA Parental Arsenic vs Ctrl</span></label>
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C12" onchange="buildRadar()"> <span style="color:#7c3aed;">C12 Racial Stem (Arsenic)</span></label>
       <label style="display:flex;align-items:center;gap:.3rem;font-size:.8rem;"><input type="checkbox" class="radar-comp-cb" value="C5" onchange="buildRadar()"> <span style="color:#1d4ed8;">C5 NHW Stem (no Ars)</span></label>
     </div>
@@ -1110,6 +1148,19 @@ function changePg(d){
   curPg=Math.max(0,Math.min(max,curPg+d));renderPWPage();
 }
 
+function sortPWByC8() {
+  const ci = CID.indexOf('C8');
+  filtPWs = [...filtPWs].sort((a,b) => {
+    const scoreA = Math.abs(a.nes[ci]||0) * (a.fdr[ci]!=null && a.fdr[ci]>0 ? -Math.log10(a.fdr[ci]) : 0);
+    const scoreB = Math.abs(b.nes[ci]||0) * (b.fdr[ci]!=null && b.fdr[ci]>0 ? -Math.log10(b.fdr[ci]) : 0);
+    return scoreB - scoreA;
+  });
+  curPg = 0; renderPWPage();
+}
+function sortPWReset() {
+  filterPW(); // re-applies current filters in original order
+}
+
 // Pathway story tab switcher
 window.showPWStory = function(name, btn) {
   document.querySelectorAll('.pw-story-panel').forEach(p => p.style.display = 'none');
@@ -1166,15 +1217,6 @@ window.addEventListener('scroll',function(){
   </div>
   <div id="methods-accordion"></div>
 </div>
-</div>
-
-<!-- RNA-SEQ QC -->
-<div style="padding:2.5rem 2rem;max-width:1200px;margin:0 auto;">
-  <div class="section-header">
-    <h2>RNA-Seq Quality Control Summary</h2>
-    <p>Key QC metrics for all 16 RNA-seq samples confirming high-quality data suitable for differential expression analysis.</p>
-  </div>
-  <div id="qc-table-wrap"></div>
 </div>
 
 <!-- LIMITATIONS + FUTURE DIRECTIONS -->

@@ -22,7 +22,7 @@ const LE_SETS = {
     comparison: 'C8',
     compLabel: 'AA Stem vs Parental (Arsenic)',
     db: 'Reactome',
-    nes: -2.61,
+    nes: -2.68,
     fdr: 0.0,
     direction: 'down',
     genes: ['XPC','DDB1','CETN2','RAD23A','ERCC3','GTF2H1','CDK7','POLD2','POLE3','RFC1','RFC2','RPA2','RPA3','ERCC1','CCNH','COPS3','COPS4','COPS5','COPS6','COPS7A','COPS8']
@@ -33,18 +33,19 @@ const LE_SETS = {
     compLabel: 'AA vs NHW Stem (Arsenic)',
     db: 'KEGG',
     nes: -1.87,
-    fdr: 0.04,
+    fdr: 0.04, // FDR from gsea_data.js; paper states FDR < 0.25
     direction: 'down',
     genes: ['PCNA','LIG1','POLD1','POLD3','POLE','POLE2','RFC3','RFC4','RFC5','CCNH','ERCC1','RFC2','RPA3','POLD2','RFC1','RPA1','RPA2']
   },
   'C7_KEGG_NER': {
-    label: 'C7: NHW Stem vs Parental (Arsenic) — KEGG NER',
+    label: 'C7: NHW Stem vs Parental (Arsenic) — KEGG NER ⚠ NOT SIGNIFICANT (shown for comparison)',
     comparison: 'C7',
     compLabel: 'NHW Stem vs Parental (Arsenic)',
     db: 'KEGG',
     nes: 0.86,
     fdr: 0.62,
     direction: 'up',
+    notSig: true,
     genes: ['ERCC1','ERCC2','ERCC4','ERCC5','XPA','RPA1','RPA2','PCNA','RFC1','RFC2','LIG1']
   },
   'C4_KAN_ARSENIC': {
@@ -68,23 +69,23 @@ const LE_SETS = {
     genes: ['HMOX1','AKR1C1','SLC7A11','NFE2L2','NQO1','ATF3','HSPB1','SRXN1','TXNRD1','GPX2','GCLC','GCLM']
   },
   'C1_INFLAM': {
-    label: 'C1: AA vs NHW Parental (No Arsenic) — Inflammatory Response',
+    label: 'C1: AA vs NHW Parental (No Arsenic) — HALLMARK_INFLAMMATORY_RESPONSE (higher in NHW)',
     comparison: 'C1',
     compLabel: 'AA vs NHW Parental (No Arsenic)',
     db: 'Hallmark',
-    nes: 1.72,
+    nes: -1.69,
     fdr: 0.08,
-    direction: 'up',
+    direction: 'down',
     genes: ['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3','NFKB1','STAT3','CCL2','TNF']
   },
   'C11_INFLAM': {
-    label: 'C11: AA vs NHW Stem (No Arsenic) — Inflammatory Response',
+    label: 'C11: AA vs NHW Stem (No Arsenic) — HALLMARK_INFLAMMATORY_RESPONSE (higher in NHW)',
     comparison: 'C11',
     compLabel: 'AA vs NHW Stem (No Arsenic)',
     db: 'Hallmark',
-    nes: 1.89,
+    nes: -2.30,
     fdr: 0.03,
-    direction: 'up',
+    direction: 'down',
     genes: ['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3','IL6','CXCL8','CCL2','CCL20','NFKBIA','IRAK2','NFKB1','STAT3','TNF']
   },
   'C8_EMT': {
@@ -241,15 +242,19 @@ function renderLEAllChips() {
         <div style="font-size:.78rem;font-weight:700;color:${compColors[comp]||'#64748b'};margin-bottom:.3rem;">
           ${sets[0].compLabel}
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:.3rem;">
-          ${sets.map(s => s.genes.map(g => `
-            <span class="le-gene-chip" onclick="leBrowserSelect('${g}')"
-              style="background:${DB_COL_LE[s.db]}18;color:${DB_COL_LE[s.db]};
-                     border-color:${DB_COL_LE[s.db]}40;"
-              title="${s.db}: ${s.label}">
-              ${g}
-            </span>`).join('')).join('')}
-        </div>
+        ${sets.map(s => `
+          <div style="margin-bottom:.3rem;">
+            ${s.notSig ? `<span style="font-size:.72rem;color:#94a3b8;font-style:italic;margin-bottom:.2rem;display:inline-block;">(not significant — shown for comparison)</span>` : ''}
+            <div style="display:flex;flex-wrap:wrap;gap:.3rem;${s.notSig ? 'opacity:.65;' : ''}">
+              ${s.genes.map(g => `
+                <span class="le-gene-chip" onclick="leBrowserSelect('${g}')"
+                  style="background:${s.notSig ? '#f1f5f9' : DB_COL_LE[s.db]+'18'};color:${s.notSig ? '#94a3b8' : DB_COL_LE[s.db]};
+                         border-color:${s.notSig ? '#cbd5e1' : DB_COL_LE[s.db]+'40'};"
+                  title="${s.db}: ${s.label}">
+                  ${g}
+                </span>`).join('')}
+            </div>
+          </div>`).join('')}
       </div>`).join('')}
   `;
 }
@@ -340,6 +345,7 @@ function renderLEResult(gene) {
               padding:.15rem .45rem;font-size:.78rem;font-weight:700;">
               NES ${s.nes > 0 ? '+' : ''}${s.nes.toFixed(2)}
             </span>
+            ${s.notSig ? `<span style="background:#f1f5f9;color:#94a3b8;border-radius:4px;padding:.1rem .35rem;font-size:.72rem;font-weight:700;">(NS)</span>` : ''}
             <span style="font-size:.75rem;color:#64748b;">FDR ${s.fdr.toFixed(2)}</span>
             ${l2fc != null ? `<span style="background:${getL2FCColor(l2fc)};padding:.15rem .45rem;
               border-radius:4px;font-size:.78rem;font-weight:700;color:#1e293b;">

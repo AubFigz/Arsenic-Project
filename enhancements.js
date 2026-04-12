@@ -4,7 +4,7 @@
    ══════════════════════════════════════════════════════════ */
 
 /* ── Sig pathway counts per comparison (|NES|>1.5 & FDR<0.25) ─ */
-const SIG_COUNTS = {C1:71,C2:57,C3:705,C4:334,C5:900,C6:877,C7:710,C8:851,C9:858,C10:967,C11:582,C12:503};
+const SIG_COUNTS = {C1:71,C2:57,C3:705,C4:334,C5:900,C6:877,C7:936,C8:962,C9:858,C10:967,C11:582,C12:503};
 
 /* ── PCA simulated data (from paper: PC1=81% variance, stem vs parental) ── */
 const PCA_DATA = [
@@ -83,6 +83,28 @@ function showGenePopup(geneName, anchorEl) {
   } else {
     html += `<p style="font-size:.84rem;color:#64748b;font-style:italic;">Detailed annotation not yet available for this gene. Use Gene Browser to view L2FC values across all 12 comparisons.</p>`;
     html += buildMiniL2FC(geneName);
+  }
+  // Leading edge membership
+  const leSets = (typeof GENE_TO_LE !== 'undefined' && GENE_TO_LE[geneName]) ? GENE_TO_LE[geneName] : [];
+  const leSetData = (typeof LE_SETS !== 'undefined') ? LE_SETS : {};
+  if (leSets.length > 0) {
+    const DB_COL_POP = { Hallmark:'#1d4ed8', KEGG:'#d97706', Reactome:'#16a34a', CGP:'#7c3aed' };
+    html += `<div style="margin-top:.8rem;padding-top:.7rem;border-top:1px solid #f1f5f9;">
+      <div style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;">Leading Edge Membership</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;">
+        ${leSets.map(k => {
+          const s = leSetData[k];
+          if (!s) return '';
+          const dbC = DB_COL_POP[s.db] || '#64748b';
+          const isSig = !s.notSig;
+          return `<span style="background:${dbC}18;color:${dbC};border:1px solid ${dbC}40;border-radius:4px;
+            padding:.15rem .45rem;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;gap:.25rem;">
+            ${isSig ? '★' : '⚠'} ${s.comparison} ${s.db}
+            <span style="font-weight:400;opacity:.7;">${(s.nes>0?'+':'')+s.nes.toFixed(2)}</span>
+          </span>`;
+        }).join('')}
+      </div>
+    </div>`;
   }
   html += `<div style="margin-top:.9rem;text-align:right;">
     <button class="btn btn-p" style="font-size:.78rem;padding:.3rem .75rem;" onclick="setG('${geneName}');closeGPop();">View in Gene Browser →</button>
@@ -188,7 +210,8 @@ function buildSigChart() {
              {type:'line',x0:57,x1:57,y0:-0.5,y1:11.5,line:{color:'#7c3aed',dash:'dot',width:1.5}}],
     annotations: [
       {x:71,y:0,text:'Racial\nbaseline',showarrow:false,font:{size:9,color:'#7c3aed'},xanchor:'left',yanchor:'bottom'},
-      {x:SIG_COUNTS['C2'],y:'C2',text:'\u2190 100% NHW direction',showarrow:false,font:{size:9,color:'#1d4ed8'},xanchor:'left',xshift:5}
+      {x:SIG_COUNTS['C2'],y:'C2',text:'\u2190 100% NHW direction',showarrow:false,font:{size:9,color:'#1d4ed8'},xanchor:'left',xshift:5},
+      {x:SIG_COUNTS['C3'],y:'C3',text:'2.1\u00d7 more than C4 \u2192 NHW more arsenic-primed (Theme 3)',showarrow:false,font:{size:8.5,color:'#0891b2'},xanchor:'left',xshift:5}
     ]
   }, {responsive: true, displayModeBar: false});
 }
@@ -246,13 +269,13 @@ function buildConvergence() {
     <!-- AA stem endpoint (suppressed NER) -->
     <circle cx="700" cy="54" r="26" fill="#fecaca" stroke="#dc2626" stroke-width="2.5" id="div-aa-end" opacity="0"/>
     <text x="700" y="48" text-anchor="middle" font-size="7.5" font-weight="700" fill="#dc2626" id="div-aa-t1" opacity="0">NER ↓↓</text>
-    <text x="700" y="59" text-anchor="middle" font-size="7" fill="#64748b" id="div-aa-t2" opacity="0">851 pathways</text>
+    <text x="700" y="59" text-anchor="middle" font-size="7" fill="#64748b" id="div-aa-t2" opacity="0">962 pathways</text>
     <text x="700" y="69" text-anchor="middle" font-size="7" fill="#64748b" id="div-aa-t3" opacity="0">NES=−2.75</text>
 
     <!-- NHW stem endpoint (NER maintained) -->
     <circle cx="700" cy="230" r="26" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2.5" id="div-nhw-end" opacity="0"/>
     <text x="700" y="224" text-anchor="middle" font-size="7.5" font-weight="700" fill="#1d4ed8" id="div-nhw-t1" opacity="0">NER ✓</text>
-    <text x="700" y="235" text-anchor="middle" font-size="7" fill="#64748b" id="div-nhw-t2" opacity="0">710 pathways</text>
+    <text x="700" y="235" text-anchor="middle" font-size="7" fill="#64748b" id="div-nhw-t2" opacity="0">936 pathways</text>
     <text x="700" y="245" text-anchor="middle" font-size="7" fill="#64748b" id="div-nhw-t3" opacity="0">NES=+0.86</text>
 
     <!-- 10x badge -->
@@ -276,6 +299,32 @@ function buildConvergence() {
   insightBox.innerHTML = `<div style="font-size:.78rem;font-weight:700;color:#1e3a8a;margin-bottom:.3rem;">&#9889; Striking directional uniformity in C2</div>
     <div style="font-size:.8rem;color:#1e40af;line-height:1.55;">Under arsenic, all 57 remaining significant racial pathways are enriched in the <strong>NHW direction</strong> &mdash; zero in the AA direction. Arsenic does not just reduce racial differences; it <em>reorients them entirely</em>.</div>`;
   el.appendChild(insightBox);
+  // Gene reversal panel
+  const reversalDiv = document.createElement('div');
+  reversalDiv.innerHTML = `
+<div style="margin-top:.9rem;background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:10px;padding:1rem;border-left:4px solid #7c3aed;">
+  <div style="font-size:.78rem;font-weight:700;color:#6d28d9;margin-bottom:.5rem;">Gene-Level Convergence: Direction Reversals Under Arsenic</div>
+  <div style="font-size:.77rem;color:#475569;margin-bottom:.6rem;">Three genes that are higher in AA at baseline (C1) reverse direction under arsenic (C2) — illustrating the gene-level reorientation:</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
+    <div style="background:#fff;border-radius:8px;padding:.6rem;border:1px solid #e9d5ff;text-align:center;">
+      <div style="font-weight:700;font-size:.85rem;color:#7c3aed;cursor:pointer;" onclick="showGenePopup&&showGenePopup('ALDH1A3',this)">ALDH1A3</div>
+      <div style="font-size:.72rem;color:#16a34a;margin-top:.2rem;">C1: ▲ Higher in AA</div>
+      <div style="font-size:.72rem;color:#dc2626;">C2: ▼ Reverses under arsenic</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:.6rem;border:1px solid #e9d5ff;text-align:center;">
+      <div style="font-weight:700;font-size:.85rem;color:#7c3aed;cursor:pointer;" onclick="showGenePopup&&showGenePopup('SNAI2',this)">SNAI2</div>
+      <div style="font-size:.72rem;color:#16a34a;margin-top:.2rem;">C1: ▲ Higher in AA</div>
+      <div style="font-size:.72rem;color:#dc2626;">C2: ▼ Reverses under arsenic</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:.6rem;border:1px solid #e9d5ff;text-align:center;">
+      <div style="font-weight:700;font-size:.85rem;color:#7c3aed;cursor:pointer;" onclick="showGenePopup&&showGenePopup('TGFBR1',this)">TGFBR1</div>
+      <div style="font-size:.72rem;color:#16a34a;margin-top:.2rem;">C1: ▲ Higher in AA</div>
+      <div style="font-size:.72rem;color:#dc2626;">C2: ▼ Reverses under arsenic</div>
+    </div>
+  </div>
+  <div style="font-size:.73rem;color:#6d28d9;margin-top:.5rem;">These reversals confirm that arsenic does not simply mute racial differences — it actively reorients the AA transcriptional program toward the NHW profile.</div>
+</div>`;
+  el.appendChild(reversalDiv);
   // Animate on load with delays
   animateConvergence();
 }
@@ -653,9 +702,9 @@ function buildClinical() {
   if (!el) return;
   const cards = [
     {icon:'💊',title:'ERCC1 as Biomarker',col:'#dc2626',bg:'#fee2e2',
-     body:'Low ERCC1 expression (as found in AA stem cells under arsenic) predicts elevated susceptibility to arsenic-induced mutagenesis. Conversely, high ERCC1 confers platinum chemotherapy resistance — making ERCC1 a dual biomarker of environmental vulnerability AND treatment resistance. Monitoring ERCC1 expression in arsenic-exposed AA women may help identify those at highest cancer risk.'},
+     body:'Low ERCC1 expression (as found in AA stem cells under arsenic) predicts elevated susceptibility to arsenic-induced mutagenesis. Conversely, high ERCC1 confers platinum chemotherapy resistance — making ERCC1 a dual biomarker of environmental vulnerability AND treatment resistance. ERCC1 protein levels are measurable by immunohistochemistry (IHC) in clinical tissue samples. Published studies in breast cancer demonstrate that low ERCC1 expression correlates with improved response to platinum-based chemotherapy (cisplatin, carboplatin). This suggests AA breast cancer patients with stem cell-enriched tumors may be selectively sensitive to platinum-based regimens — an actionable therapeutic hypothesis.'},
     {icon:'🌍',title:'Environmental Exposure Context',col:'#d97706',bg:'#fff7ed',
-     body:'Arsenic in drinking water affects millions of Americans, with particularly elevated levels in South Florida and other Southern states. These same communities show elevated rates of advanced breast cancer diagnosis in AA women. This study provides a mechanistic framework connecting environmental arsenic exposure to race-specific cancer stem cell vulnerability.'},
+     body:'Arsenic in drinking water affects millions of Americans, with particularly elevated levels in South Florida and other Southern states. These same communities show elevated rates of advanced breast cancer diagnosis in AA women. This study provides a mechanistic framework connecting environmental arsenic exposure to race-specific cancer stem cell vulnerability. Arsenic exposure is not hypothetical in the study population. Arsenic levels exceeding California\'s Public Health Goal have been documented in water supplies serving zip codes with elevated breast cancer incidence rates — including South Florida communities with high proportions of AA residents. The 0.3 µM dose used in this study falls within the range of chronic environmental exposure.'},
     {icon:'🧬',title:'Health Disparities Framework',col:'#7c3aed',bg:'#f5f3ff',
      body:'AA women have 40% higher breast cancer mortality than NHW women despite lower incidence. This gene-environment interaction model — where racial cellular biology amplifies the impact of an environmental carcinogen specifically in cancer stem cells — provides a transcriptomic mechanism for understanding and ultimately addressing this disparity.'},
     {icon:'🔬',title:'Future Validation Targets',col:'#0891b2',bg:'#eff6ff',
@@ -699,6 +748,7 @@ function buildMethods() {
       <p><strong>Databases:</strong> (1) Hallmark (50 curated sets, minimal overlap), (2) KEGG Legacy (mechanistic pathway maps), (3) Reactome (hierarchical pathway annotations), (4) CGP (empirical signatures including KAN_RESPONSE_TO_ARSENIC_TRIOXIDE, BenPorath, Pece). Total: 48 runs (12 comparisons × 4 databases).</p>
       <p><strong>Significance threshold:</strong> |NES| &gt; 1.5 AND FDR &lt; 0.25 (standard GSEA criterion accounting for multiple testing burden across thousands of pathways).</p>
     `},
+    {title:'RNA-Seq Quality Control', content:`<div id="qc-table-wrap-inner"><p style="color:#64748b;font-size:.83rem;">Loading QC data…</p></div>`},
   ];
   el.innerHTML = sections.map((s, i) => `<div class="acc-item" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:.4rem;">
     <div class="acc-hdr" style="padding:.8rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;font-weight:600;font-size:.86rem;"
@@ -717,15 +767,22 @@ function toggleAcc(i) {
   const icon = document.getElementById(`acc-icon-${i}`);
   if (!body) return;
   const open = body.style.maxHeight !== '0px' && body.style.maxHeight !== '';
-  body.style.maxHeight = open ? '0' : '600px';
+  body.style.maxHeight = open ? '0' : '800px';
   if (icon) { icon.textContent = open ? '+' : '−'; icon.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)'; }
+  // Lazy-build QC table when QC accordion section is opened
+  if (!open) {
+    const qcInner = document.getElementById('qc-table-wrap-inner');
+    if (qcInner && (qcInner.children.length === 0 || qcInner.querySelector('p'))) {
+      if (typeof buildQC === 'function') buildQC();
+    }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
    11. QC SUMMARY TABLE
    ══════════════════════════════════════════════════════════════*/
 function buildQC() {
-  const el = document.getElementById('qc-table-wrap');
+  const el = document.getElementById('qc-table-wrap') || document.getElementById('qc-table-wrap-inner');
   if (!el) return;
   const rows = [
     ['RNA Integrity (RIN)','≥ 9 (all 16 samples)','Ensures minimal RNA degradation for accurate quantification'],
