@@ -8,8 +8,8 @@ ERCC1: {
   fullName: "Excision Repair Cross-Complementation Group 1",
   category: "ner",
   summary: "Forms an obligate heterodimer with XPF (ERCC4) to perform the critical 5′ incision during NER. Rate-limiting for the entire repair pathway — no ERCC1, no excision.",
-  cancerLink: "High ERCC1 expression confers resistance to platinum chemotherapy (cisplatin, carboplatin, oxaliplatin) in lung, ovarian, gastric, and breast cancers. Conversely, low ERCC1 predicts elevated sensitivity to arsenic-induced DNA damage. ERCC1 is suppressed in all four AA breast cancer stem cell comparisons in this study — the paper's primary candidate gene.",
-  stemLink: "Consistently downregulated in AA cancer stem cells across C5, C6, C8, and C10 comparisons. Shared leading edge gene in both C8 (AA Stem vs. Parental Arsenic) and C12 (AA vs. NHW Stem Arsenic), making it the most reproducible NER suppression marker in this dataset.",
+  cancerLink: "High ERCC1 expression confers resistance to platinum chemotherapy (cisplatin, carboplatin, oxaliplatin) in lung, ovarian, gastric, and breast cancers. Conversely, low ERCC1 predicts elevated sensitivity to arsenic-induced DNA damage. ERCC1 shows significant suppression in AA stem cells (C6, C8) but not in NHW stem cells — making it the primary gene-level marker of race-specific NER disparity.",
+  stemLink: "Significantly suppressed in AA stem cells in C6 (no arsenic) and C8 (arsenic), with modest non-significant suppression in NHW stem cells (C5, C7). This pattern identifies ERCC1 as a stem cell characteristic amplified by race rather than a universal arsenic effect. Shared leading edge gene in both C8 and C12, the most reproducible NER suppression marker in this dataset.",
   arsenicLink: "Arsenic trioxide impairs ERCC1-XPF recruitment to damage sites by displacing zinc from XPA zinc-finger domains and suppressing p53-mediated NER gene transcription. This study shows that NER suppression is race- and stem-cell-specific — not a pan-cellular arsenic effect."
 },
 
