@@ -225,11 +225,10 @@ function buildRadar() {
     };
   });
 
-  // Add invisible reference ring traces at 1.0, 1.5, 2.0, 2.5 NES
+  // Add reference ring traces at 1.0, 1.5, 2.0, 2.5 NES
   const ringVals = [1.0, 1.5, 2.0, 2.5];
   const ringColors = {'1.0':'#cbd5e1','1.5':'#f59e0b','2.0':'#cbd5e1','2.5':'#94a3b8'};
   const ringDash   = {'1.0':'dot','1.5':'dash','2.0':'dot','2.5':'dot'};
-  const cats = RADAR_CATS.map(c=>c.label);
   ringVals.forEach(rv => {
     const ringR = Array(cats.length + 1).fill(rv);
     traces.push({
