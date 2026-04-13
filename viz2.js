@@ -436,7 +436,7 @@ function buildNERTrigger() {
   const c11cols = c11vals.map((v,i) => c11sig[i] ? '#7c3aed' : '#c4b5fd');
   const c12cols = c12vals.map((v,i) => c12sig[i] ? '#dc2626' : '#fca5a5');
 
-  Plotly.newPlot(chartDiv, [
+  requestAnimationFrame(() => Plotly.newPlot(chartDiv, [
     { x: pwLabels, y: c11vals, type:'bar', name:'C11: Stem, No Arsenic (purple=sig)',
       marker:{color:c11cols, opacity:0.85, line:{color:'#7c3aed',width:0.5}},
       hovertemplate:'<b>%{x}</b><br>C11 NES: %{y:.2f}<extra></extra>' },
@@ -459,7 +459,7 @@ function buildNERTrigger() {
     plot_bgcolor:'#fafafa', paper_bgcolor:'#fff',
     font:{family:'Inter,sans-serif',size:11},
     title:{text:'10 major pathways: C11 vs C12 — NER is the ONLY one that switches (bright = significant, faded = NS)',font:{size:9.5,color:'#475569'}}
-  },{responsive:true,displayModeBar:false});
+  },{responsive:true,displayModeBar:false}));
 }
 
 /* ══════════════════════════════════════════════════════════
