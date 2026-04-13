@@ -899,7 +899,9 @@ document.addEventListener('DOMContentLoaded',function(){
   gseaPWs.forEach(p=>{pwLook[p.name]=p;});
   const dd=DESEQ_DATA.data;
   CID.forEach(c=>{deseqLook[c]={};(dd[c]||[]).forEach(g=>{deseqLook[c][g.g]=g;});});
-  buildHM();buildNER('C8');buildPWTable();initSelects();
+  buildHM();buildNER('C8');initSelects();
+  // Delay table so skeleton rows are visible before data renders
+  setTimeout(buildPWTable, 120);
   setG('ERCC1');
 });
 

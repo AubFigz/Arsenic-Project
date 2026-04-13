@@ -195,15 +195,23 @@ function buildSigChart() {
     negCount[c] = sigPWs.filter(p => p.nes[ci] < 0).length;
   });
 
-  // Direction label depends on comparison type
-  const compType = {C1:'racial',C2:'racial',C11:'racial',C12:'racial',
-    C3:'nhw-ars',C4:'aa-ars',C5:'nhw-stem',C6:'aa-stem',
-    C7:'nhw-stem',C8:'aa-stem',C9:'nhw-stem-ars',C10:'aa-stem-ars'};
-  const posLabel = c => {
-    const t = compType[c];
-    if (t==='racial') return 'AA-enriched (NES > 0)';
-    if (t==='nhw-ars'||t==='aa-ars') return 'Arsenic-induced';
+  // Color coding: NES>0 = numerator-enriched (red = AA or arsenic/stem numerator)
+  //               NES<0 = denominator-enriched (blue = NHW or parental/vehicle denominator)
+  // For racial comparisons (C1,C2,C11,C12): numerator=AA → red; denominator=NHW → blue
+  // For arsenic comparisons (C3,C4,C9,C10): numerator=arsenic → red; denominator=vehicle → blue
+  // For stem comparisons (C5,C6,C7,C8): numerator=stem → red; denominator=parental → blue
+  const posColor = '#dc2626'; // red — numerator always
+  const negColor = '#1d4ed8'; // blue — denominator always
+
+  const posHoverLabel = c => {
+    if (['C1','C2','C11','C12'].includes(c)) return 'AA-enriched';
+    if (['C3','C4','C9','C10'].includes(c)) return 'Arsenic-induced';
     return 'Stem-enriched';
+  };
+  const negHoverLabel = c => {
+    if (['C1','C2','C11','C12'].includes(c)) return 'NHW-enriched';
+    if (['C3','C4','C9','C10'].includes(c)) return 'Vehicle-higher';
+    return 'Parental-higher';
   };
 
   Plotly.newPlot(el, [
@@ -211,40 +219,46 @@ function buildSigChart() {
       x: CID.map(c => posCount[c]),
       y: CID,
       type: 'bar', orientation: 'h',
-      name: '▲ Numerator-enriched (NES > 0)',
-      marker: { color: CID.map(c => CCOL[c]), opacity: 0.85 },
+      name: '▲ Numerator-enriched (NES > 0) — AA / Arsenic / Stem',
+      marker: { color: posColor, opacity: 0.82 },
       text: CID.map(c => posCount[c] > 0 ? posCount[c] : ''),
       textposition: 'inside', insidetextanchor: 'middle',
-      hovertemplate: '<b>%{y}</b><br>Numerator-enriched: <b>%{x}</b><extra></extra>',
+      textfont: {color: '#fff', size: 10},
+      hovertemplate: '<b>%{y}</b><br>' + CID.map(c => posHoverLabel(c) + ': <b>%{x}</b>').join('<br>') + '<extra></extra>',
+      customdata: CID.map(c => posHoverLabel(c)),
+      hovertemplate: '<b>%{y}</b><br>%{customdata}: <b>%{x}</b> pathways<extra></extra>',
       cliponaxis: false,
     },
     {
       x: CID.map(c => negCount[c]),
       y: CID,
       type: 'bar', orientation: 'h',
-      name: '▼ Denominator-enriched (NES < 0)',
-      marker: { color: '#1d4ed8', opacity: 0.55 },
+      name: '▼ Denominator-enriched (NES < 0) — NHW / Vehicle / Parental',
+      marker: { color: negColor, opacity: 0.60 },
       text: CID.map(c => negCount[c] > 0 ? negCount[c] : ''),
       textposition: 'inside', insidetextanchor: 'middle',
-      hovertemplate: '<b>%{y}</b><br>Denominator-enriched: <b>%{x}</b><extra></extra>',
+      textfont: {color: '#fff', size: 10},
+      customdata: CID.map(c => negHoverLabel(c)),
+      hovertemplate: '<b>%{y}</b><br>%{customdata}: <b>%{x}</b> pathways<extra></extra>',
       cliponaxis: false,
     }
   ], {
     barmode: 'stack',
     xaxis: {title: 'Significant pathways (|NES| > 1.5, FDR < 0.25)', gridcolor: '#f1f5f9', zeroline: false, range: [0, 1200]},
     yaxis: {autorange: 'reversed', tickfont: {size: 11}},
-    margin: {l: 55, r: 90, t: 20, b: 55},
-    height: 340,
+    margin: {l: 55, r: 90, t: 30, b: 65},
+    height: 360,
     plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
     font: {family: 'Inter, sans-serif', size: 11},
     legend: {orientation: 'h', y: -0.22, font: {size: 10}},
+    title: {text: 'Red = AA/Arsenic/Stem-enriched  ·  Blue = NHW/Vehicle/Parental-enriched', font: {size: 9.5, color: '#64748b'}, x: 0},
     shapes: [
       {type:'line',x0:71,x1:71,y0:-0.5,y1:11.5,line:{color:'#7c3aed',dash:'dot',width:1.5}},
     ],
     annotations: [
       {x:71,y:0,text:'Racial\nbaseline',showarrow:false,font:{size:9,color:'#7c3aed'},xanchor:'left',yanchor:'bottom'},
       {x:(posCount['C2']||0)+(negCount['C2']||0),y:'C2',
-        text:' ← 100% NHW-enriched (arsenic homogenizes)',
+        text:' ← 100% NHW-enriched (arsenic paradox)',
         showarrow:false,font:{size:9,color:'#1d4ed8'},xanchor:'left',xshift:4},
       {x:(posCount['C3']||0)+(negCount['C3']||0),y:'C3',
         text:' 2.1× more than C4 → NHW more arsenic-primed',

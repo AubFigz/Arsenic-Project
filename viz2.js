@@ -225,29 +225,38 @@ function buildRadar() {
     };
   });
 
+  // Add invisible reference ring traces at 1.0, 1.5, 2.0, 2.5 NES
+  const ringVals = [1.0, 1.5, 2.0, 2.5];
+  const ringColors = {'1.0':'#cbd5e1','1.5':'#f59e0b','2.0':'#cbd5e1','2.5':'#94a3b8'};
+  const ringDash   = {'1.0':'dot','1.5':'dash','2.0':'dot','2.5':'dot'};
+  const cats = RADAR_CATS.map(c=>c.label);
+  ringVals.forEach(rv => {
+    const ringR = Array(cats.length + 1).fill(rv);
+    traces.push({
+      type: 'scatterpolar', mode: 'lines',
+      r: ringR, theta: [...cats, cats[0]],
+      line: { color: ringColors[rv], width: rv===1.5?1.8:1, dash: ringDash[rv] },
+      fill: 'none', showlegend: false, hoverinfo: 'skip',
+      name: `NES ${rv} ring`
+    });
+  });
+
   Plotly.newPlot(el, traces, {
     polar: {
       radialaxis:{
-        visible: true, range: [-3.5, 3.5],
-        tickfont: {size: 9, color: '#94a3b8'},
-        dtick: 0.5,
-        tickvals: [-3, -2, -1.5, -1, 0, 1, 1.5, 2, 3],
-        ticktext: ['-3', '-2', '★-1.5', '-1', '0', '1', '★1.5', '2', '3'],
-        gridcolor: '#e2e8f0', linecolor: '#cbd5e1',
-        showticklabels: true, tickangle: 0,
-        layer: 'above traces'
+        visible: true, range: [0, 3.2],
+        tickfont: {size: 9, color: '#64748b'},
+        tickvals: [1.0, 1.5, 2.0, 2.5, 3.0],
+        ticktext: ['1.0', '★1.5', '2.0', '2.5', '3.0'],
+        gridcolor: '#e8ecf0', linecolor: '#cbd5e1',
+        showticklabels: true, angle: 45
       },
       angularaxis:{ tickfont:{size:9.5}, gridcolor:'#e2e8f0' }
     },
-    shapes: [
-      // significance threshold rings at ±1.5
-      {type:'circle',xref:'paper',yref:'paper',x0:0,y0:0,x1:1,y1:1,
-       line:{color:'#f59e0b',width:1,dash:'dot'},layer:'below'}
-    ],
-    legend:{ orientation:'h', y:-0.15 },
-    margin:{ l:60,r:60,t:50,b:70 }, height:460,
+    legend:{ orientation:'h', y:-0.18 },
+    margin:{ l:60,r:60,t:50,b:80 }, height:480,
     paper_bgcolor:'#fff', font: PLOT_FONT,
-    title:{ text:'Pathway Category Profile (Mean Peak |NES|) — ★ marks ±1.5 significance threshold', font:{size:10} }
+    title:{ text:'Pathway Category Profile (Mean Peak |NES|)  ·  ★ gold ring = significance threshold (1.5)', font:{size:10,color:'#475569'} }
   }, { responsive:true, displayModeBar:false });
 }
 
@@ -390,11 +399,17 @@ function buildNERTrigger() {
     <div style="font-size:.8rem;color:#7c3aed;line-height:1.55;">NER is the <strong>ONLY major pathway</strong> showing the pattern of non-significant in C11 (NES = +0.63, FDR = 0.59) becoming significant in C12 (NES = &minus;1.87, FDR &lt; 0.25) when arsenic is added. Every other pathway active in C12 is also active in C11. This makes NER uniquely arsenic-dependent in the racial stem cell comparison.</div>
   </div>`;
 
+  // Append proof label before chart
+  html += `<div style="margin-top:1.2rem;padding:.6rem .9rem;background:#f8fafc;border-radius:8px;border-left:3px solid #7c3aed;font-size:.8rem;color:#475569;">
+    <strong style="color:#6d28d9;">Visual proof below:</strong> Every other major pathway already active in C11 stays active (or inactive) in C12. NER alone crosses the significance threshold — exclusively when arsenic is added.
+  </div>`;
+
   el.innerHTML = html;
 
-  // Add comparative chart container
+  // Build comparative chart — give container explicit min-height so Plotly renders
   const chartDiv = document.createElement('div');
-  chartDiv.style.marginTop = '1rem';
+  chartDiv.id = 'ner-trigger-proof-chart';
+  chartDiv.style.cssText = 'margin-top:.8rem;width:100%;min-height:400px;';
   el.appendChild(chartDiv);
 
   // Build data for 10 representative pathways
@@ -411,31 +426,39 @@ function buildNERTrigger() {
     'REACTOME_BASE_EXCISION_REPAIR'
   ];
   const ci11 = CID.indexOf('C11'), ci12 = CID.indexOf('C12');
-  const pwLabels = compPWs.map(n => n.replace(/^(KEGG_|REACTOME_|HALLMARK_|KAN_)/,'').replace(/_/g,' ').substring(0,32));
+  const pwLabels = compPWs.map(n => n.replace(/^(KEGG_|REACTOME_|HALLMARK_|KAN_)/,'').replace(/_/g,' ').substring(0,30));
   const c11vals = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? (p.nes[ci11]||0) : 0; });
   const c12vals = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? (p.nes[ci12]||0) : 0; });
+  const c11sig  = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? p.sig[ci11] : false; });
+  const c12sig  = compPWs.map(pn => { const p = GSEA_DATA.pathways.find(x=>x.name===pn); return p ? p.sig[ci12] : false; });
+
+  // Bar colors: gold outline for significant cells
+  const c11cols = c11vals.map((v,i) => c11sig[i] ? '#7c3aed' : '#c4b5fd');
+  const c12cols = c12vals.map((v,i) => c12sig[i] ? '#dc2626' : '#fca5a5');
 
   Plotly.newPlot(chartDiv, [
-    { x: pwLabels, y: c11vals, type:'bar', name:'C11: Stem, No Arsenic',
-      marker:{color:'#7c3aed',opacity:0.75}, hovertemplate:'<b>%{x}</b><br>C11 NES: %{y:.2f}<extra></extra>' },
-    { x: pwLabels, y: c12vals, type:'bar', name:'C12: Stem + Arsenic',
-      marker:{color:'#dc2626',opacity:0.75}, hovertemplate:'<b>%{x}</b><br>C12 NES: %{y:.2f}<extra></extra>' }
+    { x: pwLabels, y: c11vals, type:'bar', name:'C11: Stem, No Arsenic (purple=sig)',
+      marker:{color:c11cols, opacity:0.85, line:{color:'#7c3aed',width:0.5}},
+      hovertemplate:'<b>%{x}</b><br>C11 NES: %{y:.2f}<extra></extra>' },
+    { x: pwLabels, y: c12vals, type:'bar', name:'C12: Stem + Arsenic (red=sig)',
+      marker:{color:c12cols, opacity:0.85, line:{color:'#dc2626',width:0.5}},
+      hovertemplate:'<b>%{x}</b><br>C12 NES: %{y:.2f}<extra></extra>' }
   ], {
     barmode: 'group',
-    xaxis: { tickangle: -32, tickfont:{size:8.5}, gridcolor:'#f1f5f9' },
-    yaxis: { title:'NES', zeroline:true, zerolinecolor:'#94a3b8', gridcolor:'#f1f5f9',
-             range:[-3.5,3.5] },
+    xaxis: { tickangle: -38, tickfont:{size:8.5}, gridcolor:'#f1f5f9' },
+    yaxis: { title:'NES', zeroline:true, zerolinecolor:'#94a3b8', gridcolor:'#f1f5f9', range:[-3.5,3.5] },
     shapes: [
-      {type:'line',x0:-0.5,x1:9.5,y0:1.5,y1:1.5,line:{color:'#f59e0b',dash:'dot',width:1}},
-      {type:'line',x0:-0.5,x1:9.5,y0:-1.5,y1:-1.5,line:{color:'#f59e0b',dash:'dot',width:1}},
+      {type:'line',x0:-0.5,x1:9.5,y0:1.5,y1:1.5,line:{color:'#f59e0b',dash:'dot',width:1.5}},
+      {type:'line',x0:-0.5,x1:9.5,y0:-1.5,y1:-1.5,line:{color:'#f59e0b',dash:'dot',width:1.5}},
     ],
-    annotations: [{x:0,y:-1.87,text:'NER: only pathway<br>that switches!',showarrow:true,arrowhead:2,
-      font:{size:9,color:'#dc2626'},ax:60,ay:0,arrowcolor:'#dc2626'}],
-    legend:{orientation:'h',y:-0.35},
-    margin:{l:55,r:20,t:35,b:110}, height:380,
+    annotations: [{x:0,y:c12vals[0],text:'NER only:<br>C11 NS → C12 ★',
+      showarrow:true,arrowhead:2,font:{size:9,color:'#dc2626'},
+      ax:55,ay:-35,arrowcolor:'#dc2626',bgcolor:'#fff7ed',bordercolor:'#dc2626',borderwidth:1,borderpad:3}],
+    legend:{orientation:'h',y:-0.38,font:{size:10}},
+    margin:{l:55,r:20,t:40,b:120}, height:400,
     plot_bgcolor:'#fafafa', paper_bgcolor:'#fff',
     font:{family:'Inter,sans-serif',size:11},
-    title:{text:'C11 vs C12: NER is the ONLY pathway switching from non-significant to significant when arsenic is added',font:{size:10}}
+    title:{text:'10 major pathways: C11 vs C12 — NER is the ONLY one that switches (bright = significant, faded = NS)',font:{size:9.5,color:'#475569'}}
   },{responsive:true,displayModeBar:false});
 }
 
