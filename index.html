@@ -142,6 +142,47 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 /* Methods floating action button */
 #methods-fab{position:fixed;bottom:1.5rem;right:1.5rem;background:#1e293b;color:#fff;padding:.5rem 1.1rem;border-radius:24px;font-size:.79rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:99;text-decoration:none;display:flex;align-items:center;gap:.35rem;transition:all .2s;border:1px solid rgba(255,255,255,.1);}
 #methods-fab:hover{background:#334155;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.32);}
+/* ── Back to top button ─────────────────────────────────── */
+#back-to-top{position:fixed;bottom:5rem;right:1.5rem;background:#1d4ed8;color:#fff;width:40px;height:40px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 14px rgba(29,78,216,.45);z-index:99;border:none;transition:all .2s;font-family:inherit;}
+#back-to-top:hover{background:#1e40af;transform:translateY(-2px);}
+#back-to-top.btt-show{display:flex;}
+/* ── Comparison color legend (floating left) ────────────── */
+#cmp-legend-float{position:fixed;left:.85rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:10px;padding:.55rem .45rem;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:98;display:none;flex-direction:column;gap:.22rem;font-size:.64rem;}
+#cmp-legend-float.clf-show{display:flex;}
+#cmp-legend-float .clf-item{display:flex;align-items:center;gap:.28rem;cursor:pointer;padding:.08rem .18rem;border-radius:4px;transition:background .1s;white-space:nowrap;}
+#cmp-legend-float .clf-item:hover{background:#f1f5f9;}
+#cmp-legend-float .clf-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+#cmp-legend-float .clf-title{font-size:.6rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;padding:.1rem .18rem .15rem;border-bottom:1px solid var(--border);margin-bottom:.05rem;}
+/* ── Quick-jump comparison widget ───────────────────────── */
+.qjump-row{display:flex;gap:.28rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.6rem .8rem;background:#f8fafc;border-radius:8px;border:1px solid var(--border);}
+.qjump-lbl{font-size:.73rem;font-weight:600;color:var(--text2);margin-right:.2rem;white-space:nowrap;}
+.qjump-btn{width:34px;height:28px;border-radius:5px;border:1.5px solid transparent;cursor:pointer;font-size:.7rem;font-weight:700;color:#fff;transition:all .15s;opacity:.72;}
+.qjump-btn:hover,.qjump-btn.qj-act{opacity:1;transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.22);}
+/* ── DESeq2 gene table ──────────────────────────────────── */
+.deseq-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.deseq-table th{background:#f8fafc;padding:.5rem .65rem;text-align:left;border-bottom:2px solid var(--border);font-weight:600;font-size:.74rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;z-index:5;}
+.deseq-table td{padding:.38rem .65rem;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.deseq-table tr:hover td{background:#f8fafc;}
+/* ── Correlation scatter panel ──────────────────────────── */
+#corr-plot{width:100%;height:420px;}
+/* ── Pathway timeline panel ─────────────────────────────── */
+#pw-timeline-plot{width:100%;height:380px;}
+/* ── Gene browser empty state ───────────────────────────── */
+.gene-empty-state{text-align:center;padding:3rem 1.5rem;color:var(--text2);}
+.gene-empty-state .ges-icon{font-size:2.8rem;opacity:.28;display:block;margin-bottom:.8rem;}
+.gene-empty-state p{font-size:.9rem;margin-bottom:.25rem;}
+.gene-empty-state .ges-hint{font-size:.78rem;color:#94a3b8;}
+/* ── Print styles ───────────────────────────────────────── */
+@media print{
+  nav,#methods-fab,#back-to-top,#cmp-legend-float,.qjump-row,
+  .controls button,#pw-prev,#pw-next,details summary~div{display:none!important;}
+  .hero{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:1.5rem!important;}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;}
+  body{font-size:10.5pt;background:#fff!important;}
+  .section,.enh-section{padding:.8rem 0!important;}
+  a{color:#000!important;text-decoration:none!important;}
+  @page{margin:1.8cm;size:A4;}
+}
 </style>
 </head>
 <body>
@@ -167,7 +208,16 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
       </div>
     </div>
     <a href="#pathway-stories">Pathways</a>
+    <a href="#pw-timeline">Timeline</a>
     <a href="#pathways">All Pathways</a>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" onclick="toggleNavDrop(this)">Tools &#9662;</button>
+      <div class="nav-drop-menu">
+        <a href="#corr-scatter">Gene Correlation</a>
+        <a href="#deseq-gene-table">DESeq2 Table</a>
+        <a href="#genes">Gene Browser</a>
+      </div>
+    </div>
     <a href="#clinical">Clinical</a>
   </div>
 </nav>
@@ -185,7 +235,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
         <div><strong style="color:#93c5fd;">③ GSEA Explorer</strong><br>Volcano, Waterfall, Bubble, Radar — all update when you change the comparison dropdown. C8 is the primary comparison.</div>
         <div><strong style="color:#93c5fd;">④ Gene Browser</strong><br>Type any gene symbol to see its L2FC across all 12 comparisons. Click any gene name anywhere on the site for a popup.</div>
         <div><strong style="color:#93c5fd;">⑤ All Pathways</strong><br>Browse or search all 3,758 pathways. Use "Sort by C8" to rank by the primary comparison. Click any NES cell for the pathway modal.</div>
-        <div><strong style="color:#93c5fd;">⑥ Methods</strong><br>Full experimental details in the accordion at the bottom. Or click the 📋 Methods button pinned to the lower right at any time.</div>
+        <div><strong style="color:#93c5fd;">⑥ Tools</strong><br>Gene Correlation scatter (plot two genes' L2FC across comparisons), DESeq2 Table (browse all 16,682 genes), and Pathway Timeline (NES progression chart). Use ⬇ Export CSV in the All Pathways Browser to download your filtered view.</div>
+        <div><strong style="color:#93c5fd;">⑦ Methods</strong><br>Full experimental details in the accordion at the bottom. Or click the 📋 Methods button pinned to the lower right. The color legend (left side) and ↑ back-to-top button appear as you scroll.</div>
       </div>
     </details>
   </div>
@@ -467,7 +518,75 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     <button class="btn btn-o" style="padding:.22rem .55rem;font-size:.73rem;" onclick="setG('ALDH1A3')">ALDH1A3</button>
     <button class="btn btn-o" style="padding:.22rem .55rem;font-size:.73rem;" onclick="setG('SNAI2')">SNAI2</button>
   </div>
-  <div id="g-result"></div>
+  <div id="g-result"><div class="gene-empty-state">
+    <span class="ges-icon">🔬</span>
+    <p><strong>Search any gene symbol above</strong></p>
+    <p class="ges-hint">e.g. ERCC1, XPC, CDK7, PARP1, HMOX1 &mdash; or click a Quick button</p>
+  </div></div>
+</div>
+</div>
+
+<!-- CORRELATION SCATTER -->
+<div id="corr-scatter" style="background:#fff;border-top:1px solid var(--border);padding:2.5rem 2rem;">
+<div class="section" style="padding:0;max-width:1200px;">
+  <div class="section-header">
+    <h2>Gene–Gene L2FC Correlation</h2>
+    <p>Plot two genes' shrunken log₂FC values across all 12 comparisons. Each dot = one comparison, colored by comparison type. Points near the diagonal = genes co-regulated across conditions.</p>
+  </div>
+  <div class="card">
+    <div class="controls" style="margin-bottom:.8rem;">
+      <label style="font-size:.83rem;font-weight:500;">Gene A:</label>
+      <input type="text" id="corr-gene-a" placeholder="e.g. ERCC1" style="width:120px;" value="ERCC1">
+      <label style="font-size:.83rem;font-weight:500;">Gene B:</label>
+      <input type="text" id="corr-gene-b" placeholder="e.g. XPC" style="width:120px;" value="XPC">
+      <button class="btn btn-p" onclick="buildCorrScatter()">Plot Correlation</button>
+      <button class="btn btn-o" onclick="setCorr('ERCC1','CDK7')">ERCC1 vs CDK7</button>
+      <button class="btn btn-o" onclick="setCorr('XPC','DDB1')">XPC vs DDB1</button>
+      <button class="btn btn-o" onclick="setCorr('ERCC1','HMOX1')">ERCC1 vs HMOX1</button>
+    </div>
+    <div id="corr-plot"></div>
+  </div>
+</div>
+</div>
+
+<!-- DESEQ2 GENE TABLE -->
+<div id="deseq-gene-table" style="background:#fff;border-top:1px solid var(--border);padding:2.5rem 2rem;">
+<div class="section" style="padding:0;max-width:1200px;">
+  <div class="section-header">
+    <h2>DESeq2 Results Browser</h2>
+    <p>Browse all 16,682 genes for any comparison. Columns: gene symbol, shrunken log₂FC, and adjusted p-value (FDR). Sort by |L2FC| or FDR. Click any gene to open the Gene Browser above.</p>
+  </div>
+  <div class="controls">
+    <label style="font-size:.82rem;font-weight:500;">Comparison:</label>
+    <select id="dgt-comp" onchange="loadDGTComp()"></select>
+    <input type="text" id="dgt-search" placeholder="Filter by gene symbol..." style="width:220px;" oninput="filterDGT()">
+    <select id="dgt-filter" onchange="filterDGT()">
+      <option value="all">All genes</option>
+      <option value="sig">FDR &lt; 0.05</option>
+      <option value="up">Significant up (L2FC &gt; 0)</option>
+      <option value="dn">Significant down (L2FC &lt; 0)</option>
+    </select>
+    <button class="btn btn-o" onclick="sortDGT('abs')" style="font-size:.8rem;">Sort by |L2FC|</button>
+    <button class="btn btn-o" onclick="sortDGT('fdr')" style="font-size:.8rem;">Sort by FDR</button>
+    <span id="dgt-cnt" style="font-size:.8rem;color:var(--text2);"></span>
+  </div>
+  <div style="overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+    <table class="deseq-table" id="dgt-table">
+      <thead><tr>
+        <th>Gene</th>
+        <th>Category</th>
+        <th>log₂FC (shrunken)</th>
+        <th>FDR (adj. p-value)</th>
+        <th>Direction</th>
+      </tr></thead>
+      <tbody id="dgt-tbody"></tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:.5rem;align-items:center;margin-top:.7rem;">
+    <button class="btn btn-o" id="dgt-prev" onclick="changeDGTPg(-1)">&#8592; Prev</button>
+    <span id="dgt-pg-info" style="font-size:.8rem;color:var(--text2);"></span>
+    <button class="btn btn-o" id="dgt-next" onclick="changeDGTPg(1)">Next &#8594;</button>
+  </div>
 </div>
 </div>
 
@@ -546,6 +665,29 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 </div>
 </div>
 
+<!-- PATHWAY ENRICHMENT TIMELINE -->
+<div id="pw-timeline" style="background:#fff;border-top:1px solid var(--border);padding:2.5rem 2rem;">
+<div class="section" style="padding:0;max-width:1200px;">
+  <div class="section-header">
+    <h2>Pathway Enrichment Timeline</h2>
+    <p>NES progression across all 12 comparisons for selected pathways. Shows how enrichment builds from racial baseline (C1/C2) through stem cell comparisons (C5–C8) and culminates in the NER suppression signal. Dashed gold line = significance threshold (|NES|=1.5).</p>
+  </div>
+  <div class="card">
+    <div class="controls" style="margin-bottom:.8rem;">
+      <label style="font-size:.82rem;font-weight:500;">Pathways:</label>
+      <select id="tl-pw-sel" multiple style="width:340px;height:90px;font-size:.8rem;border:1px solid var(--border);border-radius:6px;" title="Ctrl+click to select multiple"></select>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <button class="btn btn-p" onclick="buildPWTimeline()" style="font-size:.8rem;">Update chart</button>
+        <button class="btn btn-o" onclick="selectTimelinePreset('ner')" style="font-size:.75rem;">NER Preset</button>
+        <button class="btn btn-o" onclick="selectTimelinePreset('hallmarks')" style="font-size:.75rem;">Hallmarks Preset</button>
+      </div>
+      <div style="font-size:.75rem;color:var(--text2);max-width:200px;line-height:1.4;">Ctrl+click to select multiple pathways. Click "Update chart" to refresh.</div>
+    </div>
+    <div id="pw-timeline-plot"></div>
+  </div>
+</div>
+</div>
+
 <!-- ALL PATHWAYS -->
 <div id="pathways" style="background:#fff;border-top:1px solid var(--border);padding:2.5rem 2rem;">
 <div class="section" style="padding:0;max-width:1200px;">
@@ -557,6 +699,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     <select id="pw-cmp" onchange="filterPW()"><option value="">Any comparison</option></select>
     <button class="btn btn-o" onclick="sortPWByC8()" style="font-size:.8rem;">Sort by C8 significance</button>
     <button class="btn btn-o" onclick="sortPWReset()" style="font-size:.8rem;">Reset sort</button>
+    <button class="btn btn-o" onclick="exportPWCSV()" style="font-size:.8rem;">⬇ Export CSV</button>
     <span id="pw-cnt" style="font-size:.8rem;color:var(--text2);"></span>
   </div>
   <div style="overflow-x:auto;max-height:580px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
@@ -590,6 +733,10 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   <div class="section-header">
     <h2>GSEA Interactive Explorer</h2>
     <p>All 3,758 pathways across 4 MSigDB databases. Explore the full enrichment landscape for any comparison. Click any point or bar to open the pathway detail modal.</p>
+  </div>
+  <!-- Quick-jump comparison widget -->
+  <div class="qjump-row" id="gsea-qjump">
+    <span class="qjump-lbl">Quick jump:</span>
   </div>
 
   <!-- GSEA Volcano -->
@@ -1304,7 +1451,7 @@ function toggleNavDrop(btn) {
 
 // Nav active
 window.addEventListener('scroll',function(){
-  const ids=['overview','heatmap','volcano','genes','ner','pathways'];
+  const ids=['overview','heatmap','volcano','genes','corr-scatter','deseq-gene-table','ner','pw-timeline','pathways','gsea-explorer','clinical'];
   let cur='';
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.getBoundingClientRect().top+window.scrollY-120)cur=id;});
   document.querySelectorAll('nav .links a').forEach(a=>{
@@ -1312,6 +1459,304 @@ window.addEventListener('scroll',function(){
     a.classList.toggle('nav-active',h===cur);
   });
 });
+
+// ══════════════════════════════════════════════════════════
+//  10 NEW FEATURES
+// ══════════════════════════════════════════════════════════
+
+// ── 1. EXPORT CSV (All Pathways filtered view) ────────────
+function exportPWCSV(){
+  const rows=[['Pathway','Database','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12',
+    'C1_FDR','C2_FDR','C3_FDR','C4_FDR','C5_FDR','C6_FDR','C7_FDR','C8_FDR','C9_FDR','C10_FDR','C11_FDR','C12_FDR']];
+  filtPWs.forEach(p=>{
+    const nesVals=p.nes.map(v=>v!=null?v.toFixed(4):'');
+    const fdrVals=p.fdr.map(v=>v!=null?v.toFixed(4):'');
+    rows.push([`"${p.name.replace(/"/g,'""')}"`,p.db,...nesVals,...fdrVals]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='pathways_export.csv';a.click();
+}
+
+// ── 2. URL HASH STATE (pathway browser filter state) ─────
+function updateURLHash(){
+  const s=document.getElementById('pw-search').value||'';
+  const db=document.getElementById('pw-db').value||'';
+  const sig=document.getElementById('pw-sig').value||'';
+  const cmp=document.getElementById('pw-cmp').value||'';
+  const comp=document.getElementById('gsea-vol-comp')?document.getElementById('gsea-vol-comp').value||'':'';
+  const obj={};
+  if(s)obj.q=s;if(db)obj.db=db;if(sig&&sig!=='sig')obj.sig=sig;if(cmp)obj.cmp=cmp;if(comp&&comp!=='C8')obj.comp=comp;
+  const hash=Object.keys(obj).length?'#'+encodeURIComponent(JSON.stringify(obj)):'';
+  history.replaceState(null,'',window.location.pathname+window.location.search+(hash||'#'));
+}
+function loadURLHash(){
+  const h=window.location.hash;
+  if(!h||h==='#')return;
+  try{
+    const obj=JSON.parse(decodeURIComponent(h.slice(1)));
+    if(obj.q){const el=document.getElementById('pw-search');if(el)el.value=obj.q;}
+    if(obj.db){const el=document.getElementById('pw-db');if(el)el.value=obj.db;}
+    if(obj.sig){const el=document.getElementById('pw-sig');if(el)el.value=obj.sig;}
+    if(obj.cmp){const el=document.getElementById('pw-cmp');if(el)el.value=obj.cmp;}
+    if(obj.comp){const el=document.getElementById('gsea-vol-comp');if(el){el.value=obj.comp;}}
+    filterPW();
+  }catch(e){}
+}
+
+// Patch filterPW to also update hash
+const _origFilterPW=filterPW;
+filterPW=function(){_origFilterPW();updateURLHash();};
+
+// ── 3. QUICK-JUMP comparison widget ──────────────────────
+function buildQJump(){
+  const cont=document.getElementById('gsea-qjump');
+  if(!cont)return;
+  // Keep the label span, remove old buttons
+  while(cont.children.length>1)cont.removeChild(cont.lastChild);
+  CID.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='qjump-btn';btn.textContent=c;
+    btn.style.background=CCOL[c];btn.style.borderColor=CCOL[c];
+    btn.title=CLBL[c]||c;
+    btn.onclick=()=>{
+      // Update all comparison selectors and rebuild
+      ['gsea-vol-comp','v-comp','ner-comp','wf-comp','bubble-comp'].forEach(id=>{
+        const el=document.getElementById(id);if(el&&el.querySelector('[value="'+c+'"]'))el.value=c;
+      });
+      buildGSEAVolcano&&buildGSEAVolcano();
+      // highlight active
+      cont.querySelectorAll('.qjump-btn').forEach(b=>b.classList.remove('qj-act'));
+      btn.classList.add('qj-act');
+    };
+    cont.appendChild(btn);
+  });
+  // Set C8 active by default
+  const c8btn=cont.querySelector('.qjump-btn:nth-child(9)');if(c8btn)c8btn.classList.add('qj-act');
+}
+document.addEventListener('DOMContentLoaded',buildQJump);
+
+// ── 4. PRINT — handled by @media print CSS ───────────────
+// (CSS only, no JS needed)
+
+// ── 5. DESEQ2 GENE TABLE ─────────────────────────────────
+let dgtAllGenes=[],dgtFilt=[],dgtCurPg=0;
+const DGT_PG=100;
+function loadDGTComp(){
+  const cid=document.getElementById('dgt-comp').value;
+  if(!cid||!deseqLook[cid])return;
+  dgtAllGenes=Object.values(deseqLook[cid]).filter(g=>g&&g.g);
+  filterDGT();
+}
+function filterDGT(){
+  const cid=document.getElementById('dgt-comp').value;
+  if(!cid)return;
+  const q=(document.getElementById('dgt-search').value||'').trim().toUpperCase();
+  const mode=document.getElementById('dgt-filter').value;
+  dgtFilt=dgtAllGenes.filter(g=>{
+    if(q&&!g.g.toUpperCase().includes(q))return false;
+    if(mode==='sig'&&!(g.f!=null&&g.f<0.05))return false;
+    if(mode==='up'&&!(g.f!=null&&g.f<0.05&&g.l>0))return false;
+    if(mode==='dn'&&!(g.f!=null&&g.f<0.05&&g.l<0))return false;
+    return true;
+  });
+  dgtCurPg=0;renderDGTPage();
+  document.getElementById('dgt-cnt').textContent=dgtFilt.length.toLocaleString()+' genes';
+}
+function sortDGT(by){
+  if(by==='abs')dgtFilt=[...dgtFilt].sort((a,b)=>Math.abs(b.l||0)-Math.abs(a.l||0));
+  else if(by==='fdr')dgtFilt=[...dgtFilt].sort((a,b)=>(a.f??1)-(b.f??1));
+  dgtCurPg=0;renderDGTPage();
+}
+function renderDGTPage(){
+  const sl=dgtFilt.slice(dgtCurPg*DGT_PG,(dgtCurPg+1)*DGT_PG);
+  let h='';
+  sl.forEach(g=>{
+    const l=g.l!=null?(g.l>=0?'+':'')+g.l.toFixed(4):'—';
+    const f=g.f!=null?(g.f<0.001?'<0.001':g.f.toFixed(4)):'—';
+    const sig=g.f!=null&&g.f<0.05;
+    const up=g.l!=null&&g.l>0;
+    const cat=gCat(g.g);
+    const catColors={ner:'#dbeafe',stem:'#fce7f3',arsenic:'#dcfce7',inflam:'#fff7ed',other:'#f1f5f9'};
+    const catTextColors={ner:'#1e40af',stem:'#9d174d',arsenic:'#14532d',inflam:'#92400e',other:'#64748b'};
+    h+=`<tr>
+      <td><span style="font-weight:700;cursor:pointer;color:var(--blue);" onclick="setG('${g.g}');document.getElementById('genes').scrollIntoView({behavior:'smooth'})">${g.g}</span></td>
+      <td><span style="background:${catColors[cat]};color:${catTextColors[cat]};padding:.1rem .35rem;border-radius:3px;font-size:.7rem;font-weight:600;">${CATLBL[cat]}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:${sig?(up?'#dc2626':'#1d4ed8'):'#374151'};font-weight:${sig?700:400};">${l}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:${sig?'#d97706':'#374151'};font-weight:${sig?700:400};">${f}</td>
+      <td style="font-size:.73rem;">${sig?(up?'<span style="color:#dc2626;font-weight:600;">▲ Up</span>':'<span style="color:#1d4ed8;font-weight:600;">▼ Down</span>'):'<span style="color:#94a3b8;">—</span>'}</td>
+    </tr>`;
+  });
+  document.getElementById('dgt-tbody').innerHTML=h||'<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text2);">No genes match your filter.</td></tr>';
+  const tot=Math.ceil(dgtFilt.length/DGT_PG);
+  document.getElementById('dgt-pg-info').textContent=`Page ${dgtCurPg+1} of ${tot||1} (${dgtFilt.length.toLocaleString()} genes)`;
+}
+function changeDGTPg(d){
+  const max=Math.ceil(dgtFilt.length/DGT_PG)-1;
+  dgtCurPg=Math.max(0,Math.min(max,dgtCurPg+d));renderDGTPage();
+}
+// Initialize DESeq2 table selects and data on load
+document.addEventListener('DOMContentLoaded',function(){
+  const sel=document.getElementById('dgt-comp');if(!sel)return;
+  CID.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c+': '+CLBL[c];sel.appendChild(o);});
+  sel.value='C8';
+  // Load after main data is ready (slight delay)
+  setTimeout(()=>{loadDGTComp();},200);
+});
+
+// ── 6. CORRELATION SCATTER ────────────────────────────────
+function setCorr(a,b){
+  document.getElementById('corr-gene-a').value=a;
+  document.getElementById('corr-gene-b').value=b;
+  buildCorrScatter();
+}
+function buildCorrScatter(){
+  const ga=(document.getElementById('corr-gene-a').value||'').trim().toUpperCase();
+  const gb=(document.getElementById('corr-gene-b').value||'').trim().toUpperCase();
+  if(!ga||!gb){alert('Please enter two gene symbols.');return;}
+  const xvals=[],yvals=[],labels=[],colors=[],sizes=[];
+  CID.forEach(c=>{
+    const da=deseqLook[c]&&deseqLook[c][ga];
+    const db=deseqLook[c]&&deseqLook[c][gb];
+    if(da&&db&&da.l!=null&&db.l!=null){
+      xvals.push(da.l);yvals.push(db.l);labels.push(c+': '+CLBL[c]);
+      colors.push(CCOL[c]);
+      sizes.push(da.f<0.05&&db.f<0.05?14:da.f<0.05||db.f<0.05?10:7);
+    }
+  });
+  if(!xvals.length){
+    document.getElementById('corr-plot').innerHTML='<div style="padding:2rem;text-align:center;color:var(--text2);">One or both genes not found in dataset.</div>';return;
+  }
+  // Pearson r
+  const n=xvals.length,mx=xvals.reduce((a,b)=>a+b,0)/n,my=yvals.reduce((a,b)=>a+b,0)/n;
+  const num=xvals.reduce((s,x,i)=>s+(x-mx)*(yvals[i]-my),0);
+  const den=Math.sqrt(xvals.reduce((s,x)=>s+(x-mx)**2,0)*yvals.reduce((s,y)=>s+(y-my)**2,0));
+  const r=den>0?(num/den).toFixed(3):'—';
+  // diagonal reference line
+  const allV=[...xvals,...yvals];const lo=Math.min(...allV)-0.2,hi=Math.max(...allV)+0.2;
+  const traces=[
+    {x:[lo,hi],y:[lo,hi],mode:'lines',type:'scatter',name:'y=x',line:{color:'#94a3b8',dash:'dot',width:1.5},hoverinfo:'skip',showlegend:false},
+    {x:xvals,y:yvals,text:labels,mode:'markers',type:'scatter',name:'Comparisons',
+      marker:{color:colors,size:sizes,line:{color:'rgba(0,0,0,.3)',width:1}},
+      hovertemplate:'<b>%{text}</b><br>'+ga+': %{x:.3f}<br>'+gb+': %{y:.3f}<extra></extra>'}
+  ];
+  Plotly.newPlot('corr-plot',traces,{
+    xaxis:{title:ga+' log₂FC',zeroline:true,zerolinecolor:'#94a3b8',zerolinewidth:1.5},
+    yaxis:{title:gb+' log₂FC',zeroline:true,zerolinecolor:'#94a3b8',zerolinewidth:1.5},
+    title:{text:`${ga} vs ${gb} L2FC across 12 Comparisons   (r = ${r})`,font:{size:13}},
+    margin:{l:60,r:30,t:55,b:60},height:400,
+    plot_bgcolor:'#fafafa',paper_bgcolor:'#fff',
+    annotations:[
+      {x:(lo+hi)/2,y:hi*1.05,text:`Pearson r = ${r}  (n=${n} comparisons)`,showarrow:false,font:{size:11,color:'#64748b'},xanchor:'center'}
+    ]
+  },{responsive:true,displayModeBar:false});
+}
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(()=>buildCorrScatter(),350);
+});
+
+// ── 7. PATHWAY ENRICHMENT TIMELINE ───────────────────────
+const TL_PRESETS={
+  ner:['KEGG_NUCLEOTIDE_EXCISION_REPAIR','KEGG_BASE_EXCISION_REPAIR','KEGG_MISMATCH_REPAIR','KEGG_HOMOLOGOUS_RECOMBINATION'],
+  hallmarks:['HALLMARK_OXIDATIVE_PHOSPHORYLATION','HALLMARK_INFLAMMATORY_RESPONSE','HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION','HALLMARK_DNA_REPAIR']
+};
+function selectTimelinePreset(preset){
+  const sel=document.getElementById('tl-pw-sel');if(!sel)return;
+  const names=(TL_PRESETS[preset]||[]).map(n=>n.toUpperCase());
+  Array.from(sel.options).forEach(o=>{o.selected=names.some(n=>o.value.toUpperCase()===n);});
+}
+function buildPWTimeline(){
+  const sel=document.getElementById('tl-pw-sel');if(!sel)return;
+  const chosen=Array.from(sel.selectedOptions).map(o=>o.value);
+  if(!chosen.length){
+    document.getElementById('pw-timeline-plot').innerHTML='<div style="padding:2rem;text-align:center;color:var(--text2);">Select one or more pathways above, then click "Update chart".</div>';return;
+  }
+  const traces=chosen.map((pname,pi)=>{
+    const p=pwLook[pname];if(!p)return null;
+    const label=pname.replace(/^(KEGG_|REACTOME_|HALLMARK_|BENPORATH_|KAN_)/,'').replace(/_/g,' ').substring(0,40);
+    const LINECOLS=['#dc2626','#1d4ed8','#16a34a','#7c3aed','#d97706','#0891b2','#db2777','#374151'];
+    return{x:CID,y:p.nes.map(v=>v!=null?+v.toFixed(3):null),
+      mode:'lines+markers',name:label,connectgaps:true,
+      line:{color:LINECOLS[pi%LINECOLS.length],width:2.5},
+      marker:{size:CID.map((c,i)=>p.sig[i]?10:6),symbol:CID.map((c,i)=>p.sig[i]?'star':'circle'),
+        color:LINECOLS[pi%LINECOLS.length]},
+      hovertemplate:'<b>'+label+'</b><br>%{x}: NES=%{y:.3f}<extra></extra>'};
+  }).filter(Boolean);
+  // Add significance threshold lines
+  traces.push({x:CID,y:CID.map(()=>1.5),mode:'lines',name:'Significance (+1.5)',line:{color:'#f59e0b',dash:'dash',width:1.5},hoverinfo:'skip',showlegend:true});
+  traces.push({x:CID,y:CID.map(()=>-1.5),mode:'lines',name:'Significance (−1.5)',line:{color:'#f59e0b',dash:'dash',width:1.5},hoverinfo:'skip',showlegend:true});
+  Plotly.newPlot('pw-timeline-plot',traces,{
+    xaxis:{title:'Comparison',tickvals:CID,ticktext:CID,tickangle:0,fixedrange:true},
+    yaxis:{title:'NES',zeroline:true,zerolinecolor:'#94a3b8',zerolinewidth:1.5},
+    title:{text:'Pathway NES Across 12 Comparisons',font:{size:13}},
+    legend:{orientation:'h',y:-0.22},
+    margin:{l:60,r:30,t:50,b:100},height:370,
+    plot_bgcolor:'#fafafa',paper_bgcolor:'#fff',
+    shapes:[
+      {type:'rect',x0:'C5',x1:'C8',y0:-4,y1:4,fillcolor:'rgba(239,68,68,.04)',line:{width:0},layer:'below'},
+    ],
+    annotations:[{x:'C6.5',y:3.8,text:'Stem cell comparisons',showarrow:false,font:{size:10,color:'#ef4444'},xanchor:'center'}]
+  },{responsive:true,displayModeBar:false});
+}
+function initTimelineSelect(){
+  const sel=document.getElementById('tl-pw-sel');if(!sel||!gseaPWs.length)return;
+  // Add top pathways
+  const sorted=[...gseaPWs].sort((a,b)=>{
+    const sa=Math.max(...a.nes.map((v,i)=>a.sig[i]?Math.abs(v||0):0));
+    const sb=Math.max(...b.nes.map((v,i)=>b.sig[i]?Math.abs(v||0):0));
+    return sb-sa;
+  }).slice(0,120);
+  sorted.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=p.name.replace(/^(KEGG_|REACTOME_|HALLMARK_|KAN_)/,'').replace(/_/g,' ').substring(0,52);sel.appendChild(o);});
+  selectTimelinePreset('ner');
+  setTimeout(buildPWTimeline,500);
+}
+document.addEventListener('DOMContentLoaded',function(){setTimeout(initTimelineSelect,400);});
+
+// ── 8. GENE BROWSER EMPTY STATE ──────────────────────────
+// (handled by HTML placeholder above; setG('ERCC1') on load overrides it with real data)
+
+// ── 9. COMPARISON COLOR LEGEND ────────────────────────────
+function buildCmpLegend(){
+  const cont=document.getElementById('cmp-legend-float');if(!cont)return;
+  const groups=[
+    {label:'Racial',ids:['C1','C2','C11','C12'],col:'#7c3aed'},
+    {label:'NHW Arsenic',ids:['C3'],col:'#0891b2'},
+    {label:'AA Arsenic',ids:['C4'],col:'#dc2626'},
+    {label:'NHW Stem',ids:['C5','C7','C9'],col:'#1d4ed8'},
+    {label:'AA Stem',ids:['C6','C8','C10'],col:'#db2777'},
+  ];
+  groups.forEach(g=>{
+    const grpDiv=document.createElement('div');
+    grpDiv.innerHTML=`<div style="font-size:.6rem;font-weight:700;color:${g.col};text-transform:uppercase;letter-spacing:.04em;padding:.05rem .18rem;">${g.label}</div>`;
+    g.ids.forEach(cid=>{
+      const item=document.createElement('div');item.className='clf-item';
+      item.innerHTML=`<div class="clf-dot" style="background:${CCOL[cid]};"></div><span>${cid}</span>`;
+      item.title=CLBL[cid]||cid;
+      item.onclick=()=>{
+        const sel=document.getElementById('gsea-vol-comp');
+        if(sel){sel.value=cid;if(typeof buildGSEAVolcano==='function')buildGSEAVolcano();}
+        document.getElementById('gsea-explorer')&&document.getElementById('gsea-explorer').scrollIntoView({behavior:'smooth'});
+      };
+      grpDiv.appendChild(item);
+    });
+    cont.appendChild(grpDiv);
+  });
+}
+// Show legend when user scrolls past hero
+window.addEventListener('scroll',function(){
+  const hero=document.querySelector('.hero');
+  const btt=document.getElementById('back-to-top');
+  const leg=document.getElementById('cmp-legend-float');
+  if(!hero)return;
+  const past=window.scrollY>hero.offsetHeight;
+  if(btt)btt.classList.toggle('btt-show',past);
+  if(leg)leg.classList.toggle('clf-show',past&&window.innerWidth>=900);
+},{passive:true});
+document.addEventListener('DOMContentLoaded',function(){setTimeout(buildCmpLegend,100);});
+
+// ── 10. URL HASH load on DOMContentLoaded ────────────────
+document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,300);});
 </script>
 
 <!-- CLINICAL IMPLICATIONS -->
@@ -1368,6 +1813,14 @@ window.addEventListener('scroll',function(){
 
 <!-- METHODS FAB -->
 <a href="#methods" id="methods-fab">&#128203; Methods</a>
+
+<!-- BACK TO TOP BUTTON -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">&#8679;</button>
+
+<!-- COMPARISON COLOR LEGEND (floating left) -->
+<div id="cmp-legend-float">
+  <div class="clf-title">Comparisons</div>
+</div>
 
 <!-- GENE POPUP MODAL -->
 <div class="gpop-modal" id="gpop-modal" onclick="if(event.target===this)closeGPop()">
