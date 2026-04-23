@@ -147,11 +147,13 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 #back-to-top:hover{background:#1e40af;transform:translateY(-2px);}
 #back-to-top.btt-show{display:flex;}
 /* ── Comparison color legend (floating left) ────────────── */
-#cmp-legend-float{position:fixed;left:.85rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:10px;padding:.55rem .45rem;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:98;display:none;flex-direction:column;gap:.22rem;font-size:.64rem;}
+#cmp-legend-float{position:fixed;left:.85rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:10px;padding:.55rem .6rem;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:98;display:none;flex-direction:column;gap:.22rem;font-size:.63rem;max-width:230px;}
 #cmp-legend-float.clf-show{display:flex;}
-#cmp-legend-float .clf-item{display:flex;align-items:center;gap:.28rem;cursor:pointer;padding:.08rem .18rem;border-radius:4px;transition:background .1s;white-space:nowrap;}
+#cmp-legend-float .clf-item{display:flex;align-items:flex-start;gap:.35rem;cursor:pointer;padding:.12rem .2rem;border-radius:4px;transition:background .1s;white-space:normal;line-height:1.35;}
 #cmp-legend-float .clf-item:hover{background:#f1f5f9;}
-#cmp-legend-float .clf-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+#cmp-legend-float .clf-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:.2rem;}
+#cmp-legend-float .clf-id{font-weight:700;flex-shrink:0;margin-right:.05rem;}
+#cmp-legend-float .clf-name{color:#475569;}
 #cmp-legend-float .clf-title{font-size:.6rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;padding:.1rem .18rem .15rem;border-bottom:1px solid var(--border);margin-bottom:.05rem;}
 /* ── Quick-jump comparison widget ───────────────────────── */
 .qjump-row{display:flex;gap:.28rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;padding:.6rem .8rem;background:#f8fafc;border-radius:8px;border:1px solid var(--border);}
@@ -218,6 +220,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
         <a href="#genes">Gene Browser</a>
       </div>
     </div>
+    <a href="#why-this-pipeline">Why DESeq2</a>
     <a href="#clinical">Clinical</a>
   </div>
 </nav>
@@ -261,22 +264,26 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     <line x1="105" y1="36" x2="105" y2="56" stroke="white" stroke-width="1"/>
   </svg>
   <div class="hero-inner" style="position:relative;z-index:1;">
-    <h1>Arsenic Selectively Suppresses Nucleotide Excision Repair in African American Breast Cancer Stem Cells</h1>
-    <p>Transcriptome-wide profiling of BRL-23 (NHW) and BRL-24 (AA) breast tissue-derived cell lines across parental and CD24&minus;/CD49f+/CD44+ cancer stem cell populations under vehicle and chronic low-dose arsenic trioxide (0.3 &mu;M, 14 days).</p>
+    <h1>Arsenic Selectively Suppresses Nucleotide Excision Repair in African American Breast Cancer Stem-like Cells</h1>
+    <p>Transcriptome-wide profiling of BRL-23 (NHW) and BRL-24 (AA) breast tissue-derived cell lines across parental and CD24&minus;/CD49f+/CD44+ CSC-like populations under vehicle and chronic low-dose arsenic trioxide (0.3 &mu;M, 14 days). BRL-23 and BRL-24 originate from non-diseased reduction-mammoplasty tissue; CSC-like populations are defined by the CD24&minus;/CD49f+/CD44+ surface phenotype, not by tumor origin.</p>
     <div class="hero-badges">
       <span class="badge badge-w">16,682 genes profiled</span>
       <span class="badge badge-w">12 pairwise comparisons</span>
+      <span class="badge badge-w">44% transcriptome differs at baseline (7,355 DEGs)</span>
       <span class="badge badge-w">48 GSEA runs &bull; 4 MSigDB databases</span>
       <span class="badge badge-a">Primary finding: KEGG NER &nbsp;NES = &minus;2.75 &nbsp;FDR = 0.18 (C8)</span>
     </div>
     <div class="finding-box">
       <h3>Central Finding &mdash; Three-Condition Requirement</h3>
-      <p>NER suppression in AA stem cells requires ALL THREE simultaneously:</p>
+      <p>NER suppression in AA CSC-like cells requires ALL THREE simultaneously:</p>
       <div class="three-way">
         <div class="req"><span class="n">1</span> African American cellular biology</div>
-        <div class="req"><span class="n">2</span> Cancer stem cell identity (CD24&minus;/CD49f+/CD44+)</div>
+        <div class="req"><span class="n">2</span> CSC-like identity (CD24&minus;/CD49f+/CD44+)</div>
         <div class="req"><span class="n">3</span> Arsenic trioxide exposure (0.3 &mu;M, 14 days)</div>
       </div>
+    </div>
+    <div style="margin-top:1rem;padding:.7rem 1rem;background:rgba(255,255,255,.08);border-left:3px solid #fbbf24;border-radius:6px;font-size:.82rem;line-height:1.55;color:#f1f5f9;">
+      <strong style="color:#fbbf24;">Provenance:</strong> BRL-23 and BRL-24 were originally established and karyotyped in the Latimer laboratory (UPMC IRB 0609002). The 0.3 &mu;M ATO LC<sub>10</sub> dose, MWRI medium formulation, and 40 mM ATO stock protocol were previously characterized on the parental lines by Yousef (2025) and Alharbi (2025). The CD24&minus;/CD49f+/CD44+ CSC-like flow sort and the transcriptomic comparisons reported here were performed in the present study and were <em>not</em> part of the prior published work, which analyzed unsorted parental cultures only.
     </div>
   </div>
 </div>
@@ -292,8 +299,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     <div class="stat-card"><span class="val">+0.86</span><span class="lbl">NES: KEGG NER in NHW Stem+Arsenic (C7)</span></div>
     <div class="stat-card"><span class="val">10&times;</span><span class="lbl">Amplification of racial differences in stem vs parental cells</span></div>
     <div class="stat-card"><span class="val">68%</span><span class="lbl">Collapse in racial DEGs under arsenic (parental cells)</span></div>
-    <div class="stat-card"><span class="val">ERCC1</span><span class="lbl">Primary candidate — stem cell NER marker, amplified in AA</span></div>
-    <div class="stat-card"><span class="val">16</span><span class="lbl">Leading edge genes in C8 NER suppression (KEGG)</span></div>
+    <div class="stat-card"><span class="val">ERCC1</span><span class="lbl">Primary candidate — suppressed across all AA stem comparisons (C5&ndash;C8)</span></div>
+    <div class="stat-card"><span class="val">16</span><span class="lbl">GSEA leading edge genes &mdash; C8 KEGG NER<br><span style="font-size:.68rem;color:#64748b;">+ 13/23 NER genes FDR&lt;0.05 individually (DESeq2)</span></span></div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
     <div class="card">
@@ -335,6 +342,9 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
         <span style="background:#fee2e2;color:#991b1b;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">CCNH</span>
         <span style="background:#fee2e2;color:#991b1b;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">RFC2</span>
         <span style="background:#fee2e2;color:#991b1b;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">RPA3</span>
+      </div>
+      <div style="margin-top:.45rem;background:#fef2f2;border-radius:6px;padding:.4rem .6rem;font-size:.76rem;color:#991b1b;line-height:1.5;">
+        <strong>ERCC1 — race-independent vulnerability:</strong> Suppressed in <em>both</em> lines under arsenic in stem comparisons — C7 NHW: L2FC&nbsp;=&nbsp;−0.538, FDR&nbsp;=&nbsp;0.002 ★ &nbsp;|&nbsp; C8 AA: L2FC&nbsp;=&nbsp;−0.469, FDR&nbsp;=&nbsp;0.009 ★. ERCC1 is the <em>only</em> NER gene suppressed in both racial lines under arsenic; all others diverge in direction. This makes ERCC1 a race-independent vulnerability on top of the race-specific NER suppression in AA cells.
       </div></div>
       <div style="margin-bottom:.75rem;"><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:.3rem;">C8-only &mdash; Damage Recognition &amp; TFIIH Loading</div>
       <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
@@ -346,6 +356,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
         <span style="background:#dbeafe;color:#1e40af;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">GTF2H1</span>
         <span style="background:#dbeafe;color:#1e40af;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">CDK7</span>
       </div></div>
+      <div style="margin-bottom:.75rem;background:#fffbeb;border-radius:8px;padding:.5rem .75rem;border-left:3px solid #f59e0b;"><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#92400e;margin-bottom:.25rem;">Individual Gene Corroboration (C8)</div><div style="font-size:.77rem;color:#374151;line-height:1.55;">13 of 23 NER genes individually reached FDR &lt; 0.05 in C8 DESeq2 results (all suppressed): CDK7 (FDR 0.00027), RFC1 (0.0015), ERCC1 (0.0089), XPC (0.016), RAD23A (0.019), CETN2 (0.031), POLD2 (0.048). Also: Reactome C8 leading edge includes 8 COP9 signalosome subunits (COPS3–8), extending suppression upstream to chromatin remodeling steps before damage recognition.</div></div>
       <div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:.3rem;">C12-only &mdash; Gap-Filling &amp; Ligation Machinery</div>
       <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
         <span style="background:#dcfce7;color:#14532d;padding:.12rem .4rem;border-radius:5px;font-size:.78rem;">PCNA</span>
@@ -416,8 +427,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 <div id="stem-val" class="section-texture" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
 <div class="section" style="padding:0;max-width:1200px;">
   <div class="section-header">
-    <h2>Stem Cell Identity Validation</h2>
-    <p>Eight lines of evidence confirming the CD24&minus;/CD49f+/CD44+ sorted population carries genuine cancer stem cell identity. PCA shows PC1 (81% variance) completely separates stem from parental.</p>
+    <h2>CSC-like Identity Validation</h2>
+    <p>Eight lines of evidence confirming the CD24&minus;/CD49f+/CD44+ sorted population carries genuine CSC-like (cancer stem cell-like) identity. PCA shows PC1 (81% variance) completely separates CSC-like from parental.</p>
   </div>
   <div id="stem-val-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:1.5rem;"></div>
   <div class="card">
@@ -609,7 +620,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
 <div id="mechanism" style="padding:2.5rem 2rem;max-width:1200px;margin:0 auto;">
   <div class="section-header">
     <h2>Mechanistic Model &mdash; The Double Hit</h2>
-    <p>Two converging molecular insults in AA breast cancer stem cells under arsenic: elevated oxidative DNA damage (from higher OxPhos/ROS baseline) combined with suppressed NER repair capacity (from arsenic-driven gene suppression).</p>
+    <p>Two converging molecular insults in AA breast CSC-like cells under arsenic: elevated oxidative DNA damage (from higher OxPhos/ROS baseline) combined with suppressed NER repair capacity (from arsenic-driven gene suppression).</p>
   </div>
   <div class="card">
     <div id="double-hit-wrap"></div>
@@ -627,7 +638,7 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     </div>
     <div style="background:#eff6ff;border-radius:10px;padding:1rem;border-left:4px solid var(--blue);">
       <div style="font-size:.8rem;font-weight:700;color:var(--blue);margin-bottom:.4rem;">Theme 2: NHW Higher Inflammatory Signaling</div>
-      <div style="font-size:.77rem;color:#374151;line-height:1.55;">Inflammatory NES (AA vs NHW, negative = higher in NHW): C1=&minus;1.69, C11=&minus;2.30, C12=&minus;1.99. NHW cells show higher inflammatory baseline, amplified further in stem cells. Counterintuitively, inflammation here is a NHW characteristic.</div>
+      <div style="font-size:.77rem;color:#374151;line-height:1.55;">Inflammatory NES (AA vs NHW, negative = higher in NHW): C1=&minus;1.69, C11=&minus;2.30, C12=&minus;1.99. NHW cells show higher inflammatory baseline, amplified in stem cells. 23 core genes shared across C1 &amp; C11 (ICAM1, IL1A, IL7R, LYN, TLR3 + 18 others). 18 additional genes gained exclusively in C11 stem cells (IL6, CXCL8, CCL2, CCL20, NFκB axis).</div>
     </div>
     <div style="background:#f0fdfa;border-radius:10px;padding:1rem;border-left:4px solid var(--teal);">
       <div style="font-size:.8rem;font-weight:700;color:var(--teal);margin-bottom:.4rem;">Theme 3: NHW Constitutively More Arsenic-Primed</div>
@@ -1013,8 +1024,8 @@ const CLBL={C1:'AA vs NHW — Parental Vehicle',C2:'AA vs NHW — Parental Arsen
 const CCOL={C1:'#7c3aed',C2:'#7c3aed',C11:'#7c3aed',C12:'#7c3aed',C3:'#0891b2',C7:'#0891b2',C4:'#dc2626',C8:'#dc2626',C5:'#1d4ed8',C9:'#1d4ed8',C6:'#db2777',C10:'#db2777'};
 const NER=new Set(['ERCC1','ERCC2','ERCC3','ERCC4','ERCC5','ERCC6','ERCC8','XPC','DDB1','DDB2','CETN2','RAD23A','RAD23B','GTF2H1','GTF2H2','GTF2H3','GTF2H4','GTF2H5','CDK7','CCNH','MNAT1','XPA','PCNA','LIG1','RFC1','RFC2','RFC3','RFC4','RFC5','RPA1','RPA2','RPA3','RPA4','POLD1','POLD2','POLD3','POLD4','POLE','POLE2','POLE3','POLE4','CUL4A','CUL4B','COPS3','COPS4','COPS5','COPS6','COPS7A','COPS8','PARP1','PARP2']);
 const STEM=new Set(['SNAI2','VIM','KLF4','BMI1','SMO','ALDH1A3','CD44','TGFBR1','CD24','ITGA6','MYC','SOX2','NOTCH1','NOTCH2','HES1','GLI1','GLI2','ALDH1A1']);
-const ARS=new Set(['HMOX1','SLC7A11','ATF3','IL6','CXCL8','NFE2L2','HSPB1','NQO1','AKR1C1','CXCL1','HSPA1A','HSPB8']);
-const INF=new Set(['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3','NAMPT','ADORA2B','BDKRB1','CD82','CXCL6','CCL2','CCL20','NFKBIA','IRAK2','HIF1A','AHR','TNF','NFKB1','STAT3','IL8']);
+const ARS=new Set(['HMOX1','SLC7A11','ATF3','NFE2L2','HSPB1','NQO1','AKR1C1','CXCL1','HSPA1A','HSPB8']); // IL6,CXCL8 moved to INF (inflammatory leading edge)
+const INF=new Set(['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3','NAMPT','ADORA2B','BDKRB1','CD82','CXCL6','IL6','CXCL8','CCL2','CCL20','NFKBIA','IRAK2']); // INFLAM_CORE (12 shared C1&C11) + INFLAM_STEM (6 C11-only) — HIF1A/AHR/TNF/NFKB1/STAT3 removed (C1-only, not shared inflammatory signature)
 const KPW=[
   {n:'KEGG_NUCLEOTIDE_EXCISION_REPAIR',g:'NER'},{n:'REACTOME_NUCLEOTIDE_EXCISION_REPAIR',g:'NER'},
   {n:'REACTOME_BASE_EXCISION_REPAIR',g:'BER'},{n:'KEGG_BASE_EXCISION_REPAIR',g:'BER'},
@@ -1731,7 +1742,8 @@ function buildCmpLegend(){
     grpDiv.innerHTML=`<div style="font-size:.6rem;font-weight:700;color:${g.col};text-transform:uppercase;letter-spacing:.04em;padding:.05rem .18rem;">${g.label}</div>`;
     g.ids.forEach(cid=>{
       const item=document.createElement('div');item.className='clf-item';
-      item.innerHTML=`<div class="clf-dot" style="background:${CCOL[cid]};"></div><span>${cid}</span>`;
+      const fullName=(CLBL[cid]||cid).replace(' ★','');
+      item.innerHTML=`<div class="clf-dot" style="background:${CCOL[cid]};"></div><span><span class="clf-id" style="color:${CCOL[cid]};">${cid}</span><span class="clf-name"> ${fullName}</span></span>`;
       item.title=CLBL[cid]||cid;
       item.onclick=()=>{
         const sel=document.getElementById('gsea-vol-comp');
@@ -1779,6 +1791,58 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
 </div>
 </div>
 
+<!-- WHY THIS PIPELINE — METHODS COMPARISON -->
+<div id="why-this-pipeline" style="background:#f8fafc;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 2rem;">
+  <div class="section" style="padding:0;max-width:1200px;">
+    <div class="section-header">
+      <h2>Why DESeq2 + GSEAPreranked? &mdash; Head-to-Head Methods Comparison</h2>
+      <p>The primary NER finding survives only under the DESeq2&nbsp;+&nbsp;GSEAPreranked pipeline. Every alternative normalization and every alternative enrichment tool tested either flips the direction of key genes, inflates false positives, or dissolves the signal entirely. Numbers below are from the same 16 samples analyzed in parallel.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.3rem;">
+
+      <div class="card" style="border-left:4px solid #16a34a;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#16a34a;letter-spacing:.05em;margin-bottom:.4rem;">&#x2713; Chosen pipeline</div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#166534;">DESeq2 median-of-ratios + GSEAPreranked</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.55;margin-bottom:.5rem;">Negative-binomial model on raw counts with empirical-Bayes dispersion shrinkage (apeglm). Supports the full factorial model <code style="background:#1e293b;color:#e2e8f0;padding:.1rem .3rem;border-radius:3px;font-size:.75rem;">ethnicity &times; Treatment &times; Type</code> and borrows variance across genes, enabling principled inference even at n=1 stem cell conditions.</p>
+        <div style="font-size:.8rem;padding:.5rem .7rem;background:#dcfce7;border-radius:6px;color:#166534;font-weight:600;">C8 KEGG NER: NES = &minus;2.75, FDR = 0.18</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #dc2626;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#dc2626;letter-spacing:.05em;margin-bottom:.4rem;">&#x2717; Fails on composition bias</div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#991b1b;">CPM + LOG(avg<sub>2</sub>/avg<sub>1</sub>) fold change</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.55;margin-bottom:.5rem;">CPM divides by total reads, so a single high-expressing gene (e.g. <strong>VIM</strong> at ~3,000&ndash;4,000 CPM) dominates the denominator differently in each line and inflates/deflates every other gene's apparent ratio. Also provides no statistical framework for n=1 stem cell conditions.</p>
+        <div style="font-size:.8rem;padding:.5rem .7rem;background:#fee2e2;border-radius:6px;color:#991b1b;font-weight:600;margin-bottom:.4rem;">ALDH1A3 direction reversal<br><span style="font-weight:500;font-size:.75rem;">CPM: L2FC &minus;2.92 (7.6&times; lower in AA) &nbsp;vs.&nbsp; DESeq2: +1.51 (2.9&times; higher)</span></div>
+        <div style="font-size:.75rem;padding:.4rem .6rem;background:#fff7ed;border-radius:5px;color:#9a3412;">Curated 54-gene CPM list contained zero NER pathway genes &mdash; primary finding structurally invisible.</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #ea580c;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#ea580c;letter-spacing:.05em;margin-bottom:.4rem;">&#x2717; Collapses factorial design</div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#9a3412;">Partek Flow built-in GSEA</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.55;margin-bottom:.5rem;">Requires a two-level factor, so the four-variable design must be collapsed (AA vs NHW, Arsenic vs Vehicle, Stem vs Parental separately). This averages the AA-specific, arsenic-dependent NER signal into noise across racial backgrounds and treatments.</p>
+        <div style="font-size:.8rem;padding:.5rem .7rem;background:#ffedd5;border-radius:6px;color:#9a3412;font-weight:600;margin-bottom:.4rem;">Stem vs Parental (DESeq2 counts): NES = &minus;1.31, FDR = 0.38</div>
+        <div style="font-size:.8rem;padding:.5rem .7rem;background:#fef3c7;border-radius:6px;color:#92400e;font-weight:600;">Same comparison on CPM counts: NES = &minus;0.56, FDR = 1.00</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #7c3aed;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:.05em;margin-bottom:.4rem;">&#x2717; Dilutes signal, can't do n=1</div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#5b21b6;">Partek Gene Set ANOVA</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.55;margin-bottom:.5rem;">Weights every pathway gene equally (diluting the coherent core), requires within-group replicates (so C5&ndash;C12 stem comparisons are excluded), and can't generate leading-edge gene lists. The large "disruption" p-values confirm NER is perturbed but not where or in which direction.</p>
+        <div style="font-size:.8rem;padding:.5rem .7rem;background:#ede9fe;border-radius:6px;color:#5b21b6;font-weight:600;margin-bottom:.4rem;">DESeq2 NER main effect: AA vs NHW p = 0.80 &bull; Arsenic vs Vehicle p = 0.49 &bull; Stem vs Parental p = 0.011</div>
+        <div style="font-size:.75rem;padding:.4rem .6rem;background:#fef3c7;border-radius:5px;color:#92400e;">CPM variant: AA vs NHW p = 0.049 &mdash; <strong>spurious</strong> signal at L2FC &asymp; 0; 44% more pathways called significant across the three comparisons than DESeq2 Gene Set ANOVA, consistent with composition-bias false positives.</div>
+      </div>
+
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,#ecfdf5 0%,#f0fdf4 100%);border-left:4px solid #16a34a;">
+      <h3 style="font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#166534;">Bottom line</h3>
+      <p style="font-size:.85rem;line-height:1.6;color:#14532d;margin-bottom:.4rem;">The race-specific, arsenic-dependent NER suppression signal requires <strong>four</strong> methodological choices in combination: (1) median-of-ratios normalization (not CPM) to neutralize composition bias, (2) empirical-Bayes dispersion shrinkage (not t-tests) to handle n=1 stem cell conditions, (3) a full factorial model (not collapsed two-group comparisons) to preserve the AA&times;Arsenic&times;Stem interaction, and (4) rank-weighted enrichment on pre-computed statistics (GSEAPreranked, not equal-weighted Gene Set ANOVA) to concentrate power on the sub-threshold NER genes that drive the signal.</p>
+      <p style="font-size:.8rem;line-height:1.55;color:#166534;margin:0;">Any one of those choices reverted to a simpler alternative erases the primary finding. The comparison above uses the same 16 samples across every pipeline, so the differences are purely methodological.</p>
+    </div>
+
+  </div>
+</div>
+
 <!-- LIMITATIONS + FUTURE DIRECTIONS -->
 <div style="background:#fff;border-top:1px solid var(--border);padding:2.5rem 2rem;margin-bottom:0;">
 <div class="section" style="padding:0;max-width:1200px;">
@@ -1798,7 +1862,7 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
   <div style="max-width:1200px;margin:0 auto;">
     <h2 style="font-size:1.1rem;font-weight:700;color:#93c5fd;margin-bottom:1rem;">Cite This Work</h2>
     <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1.2rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;color:#cbd5e1;margin-bottom:.9rem;">
-      [Authors]. (2025). Arsenic trioxide selectively suppresses nucleotide excision repair in African American breast cancer stem cells: a transcriptome-wide analysis.
+      [Authors]. (2026). Arsenic trioxide unmasks selective suppression of nucleotide excision repair in African American breast cancer stem-like cells: a transcriptome-wide study.
       <em style="color:#93c5fd;">Journal TBD</em>.
       DOI: <span style="color:#fbbf24;">[Pending publication]</span>
     </div>
