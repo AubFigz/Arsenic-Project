@@ -35,9 +35,9 @@ const PCA_DATA = [
 ];
 
 /* ── Inflammatory gene leading edges ── */
-const INFLAM_CORE = ['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3']; // C1 & C11
-const INFLAM_STEM = ['IL6','CXCL8','CCL2','CCL20','NFKBIA','IRAK2','HIF1A']; // C11 only gains
-const INFLAM_ARS  = ['NAMPT','ADORA2B','BDKRB1','CD82','CXCL6','AHR','TNF','NFKB1','STAT3']; // additional
+const INFLAM_CORE = ['ICAM1','IL1A','IL1R1','IL7R','IFITM1','LYN','TLR3','NAMPT','ADORA2B','BDKRB1','CD82','CXCL6']; // Shared C1 & C11 — 23 core genes, 12 shown in Fig 4B
+const INFLAM_STEM = ['IL6','CXCL8','CCL2','CCL20','NFKBIA','IRAK2']; // C11-only stem gains (Fig 4B)
+const INFLAM_ARS  = ['AHR','HIF1A','TNF','NFKB1','STAT3']; // C1-only or additional
 
 /* ── XPC paradox data ── */
 const XPC_PARADOX = {
@@ -554,11 +554,11 @@ function buildInflamPanel(cid) {
   let s = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;font-family:Inter,sans-serif;" xmlns="http://www.w3.org/2000/svg">
   <defs><marker id="arr-i" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker></defs>`;
   // Core shared (C1 & C11)
-  s += group(10, 10, 340, 130, 'Core Signature — Shared C1 & C11 (AA vs. NHW)', INFLAM_CORE, 4, '#fff1f2', '#fecdd3');
+  s += group(10, 10, 420, 130, 'Shared C1 & C11 — 23 Core NHW-Higher Genes (12 shown)', INFLAM_CORE, 4, '#fff1f2', '#fecdd3');
   // C11-only gains
-  s += group(360, 10, 340, 130, 'Amplified in Stem Cells — C11 Additions', INFLAM_STEM, 4, '#fff7ed', '#fed7aa');
-  // Additional
-  s += group(710, 10, 240, 130, 'Additional Inflammatory', INFLAM_ARS, 3, '#f5f3ff', '#ddd6fe');
+  s += group(440, 10, 290, 130, 'C11-Only — Stemness-Amplified (IL6, CCL2, NFκB axis)', INFLAM_STEM, 3, '#fff7ed', '#fed7aa');
+  // C1-only / Additional
+  s += group(740, 10, 210, 130, 'C1-Only / Additional', INFLAM_ARS, 2, '#f5f3ff', '#ddd6fe');
   // Bottom: OxPhos context
   s += `<rect x="10" y="152" width="940" height="80" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
   <text x="480" y="170" text-anchor="middle" font-size="10" font-weight="700" fill="#15803d">Racial OxPhos Difference — AA Higher in ALL Conditions (most stable finding)</text>
@@ -651,6 +651,66 @@ function buildXPCParadox() {
         <p style="font-size:.84rem;color:#374151;line-height:1.6;margin:0;">The compensatory XPC induction seen in AA parental cells <strong>fails in the stem compartment</strong> — stem cells suppress XPC under arsenic instead of inducing it. This reversal, combined with stem cell identity and AA racial background, is the defining three-condition requirement of this study's central finding.</p>
       </div>
     </div>
+  </div>
+
+  <!-- XPC Three-Phase Trajectory -->
+  <div style="margin-top:1rem;padding:1rem;background:#f0f9ff;border-radius:10px;border:2px solid #bae6fd;">
+    <div style="font-size:.78rem;font-weight:700;color:#0369a1;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.04em;">📊 XPC Three-Phase Trajectory in AA Cells</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;margin-bottom:.8rem;">
+      <div style="background:#fff;border-radius:8px;padding:.7rem;border-left:4px solid #7c3aed;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:#7c3aed;margin-bottom:.3rem;">Phase 1 — Baseline (C1)</div>
+        <div style="font-size:1.1rem;font-weight:800;color:#7c3aed;">−0.300</div>
+        <div style="font-size:.72rem;color:#64748b;">L2FC &nbsp;|&nbsp; FDR = 0.019 ★</div>
+        <div style="font-size:.77rem;color:#374151;margin-top:.3rem;">XPC is <strong>lower in AA parental cells at baseline</strong>. AA starts with less damage recognition capacity.</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:.7rem;border-left:4px solid #dc2626;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:#dc2626;margin-bottom:.3rem;">Phase 2 — AA Parental + Arsenic (C4)</div>
+        <div style="font-size:1.1rem;font-weight:800;color:#dc2626;">+0.783</div>
+        <div style="font-size:.72rem;color:#64748b;">L2FC &nbsp;|&nbsp; FDR &lt; 0.001 ★</div>
+        <div style="font-size:.77rem;color:#374151;margin-top:.3rem;">AA parental cells mount a <strong>strong compensatory induction</strong>. NHW parental cells: +0.033, FDR = 0.866 (no response).</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:.7rem;border-left:4px solid #b45309;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:#b45309;margin-bottom:.3rem;">Phase 3 — AA Stem + Arsenic (C8)</div>
+        <div style="font-size:1.1rem;font-weight:800;color:#b45309;">−0.452</div>
+        <div style="font-size:.72rem;color:#64748b;">L2FC &nbsp;|&nbsp; FDR = 0.016 ★</div>
+        <div style="font-size:.77rem;color:#374151;margin-top:.3rem;">The compensatory induction <strong>collapses in stem cells</strong>. XPC is suppressed — the C8 NER leading edge gene.</div>
+      </div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.65rem 1rem;font-size:.8rem;color:#e2e8f0;line-height:1.55;">
+      <strong style="color:#fbbf24;">Key insight:</strong> XPC undergoes a three-phase trajectory in AA cells: <span style="color:#c084fc;">lower at baseline</span> → <span style="color:#f87171;">compensatory induction under arsenic in parental cells</span> → <span style="color:#fb923c;">suppression in stem cells under arsenic</span>. This trajectory is entirely absent in NHW cells, where XPC does not significantly change under arsenic in any condition. The stem cell suppression, despite the prior compensatory induction, makes the stem compartment the locus where arsenic's NER impact is most consequential.
+    </div>
+  </div>
+
+  <!-- C7 vs C8 Opposite Direction Callout -->
+  <div style="margin-top:1rem;padding:1rem;background:#fafafa;border-radius:10px;border:2px solid #e2e8f0;">
+    <div style="font-size:.78rem;font-weight:700;color:#1e293b;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.04em;">⬆⬇ Opposite Repair Trajectories: C7 (NHW) vs C8 (AA) — Gap-Filling &amp; Ligation Genes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.8rem;">
+      <!-- C7 NHW -->
+      <div style="background:#eff6ff;border-radius:8px;padding:.8rem;border-top:3px solid #0891b2;">
+        <div style="font-size:.74rem;font-weight:700;color:#0891b2;margin-bottom:.5rem;">C7 — NHW Stem vs Parental Arsenic &nbsp;<span style="background:#dbeafe;padding:.1rem .35rem;border-radius:4px;">NES = +0.86 (NS)</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:#64748b;margin-bottom:.3rem;text-transform:uppercase;">Gap-filling genes INDUCED in NHW ▲</div>
+        ${[['POLD1','FDR = 2.3×10⁻⁷','L2FC = +1.42'],['POLE','FDR = 1.1×10⁻⁴','L2FC = +0.87'],['LIG1','FDR = 1.7×10⁻⁴','L2FC = +0.99'],['RFC3','FDR = 4.3×10⁻⁴','L2FC = +1.14']].map(([g,fdr,l2fc]) =>
+          `<div style="display:flex;align-items:center;justify-content:space-between;padding:.22rem 0;border-bottom:1px solid #e0f2fe;font-size:.79rem;">
+            <span style="font-weight:700;color:#0891b2;">${g}</span>
+            <span style="font-family:monospace;color:#16a34a;">${l2fc} ★</span>
+            <span style="font-size:.7rem;color:#64748b;">${fdr}</span>
+          </div>`).join('')}
+      </div>
+      <!-- C8 AA -->
+      <div style="background:#fff5f5;border-radius:8px;padding:.8rem;border-top:3px solid #dc2626;">
+        <div style="font-size:.74rem;font-weight:700;color:#dc2626;margin-bottom:.5rem;">C8 — AA Stem vs Parental Arsenic &nbsp;<span style="background:#fee2e2;padding:.1rem .35rem;border-radius:4px;">NES = −2.75 ★</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:#64748b;margin-bottom:.3rem;text-transform:uppercase;">Same genes SUPPRESSED in AA ▼</div>
+        ${[['POLD2','FDR = 0.048','L2FC = −0.35'],['POLE3','FDR = 0.014','L2FC = −0.51'],['LIG1','FDR = 0.362','L2FC = −0.17'],['RFC1','FDR = 0.001','L2FC = −0.52']].map(([g,fdr,l2fc]) =>
+          `<div style="display:flex;align-items:center;justify-content:space-between;padding:.22rem 0;border-bottom:1px solid #fee2e2;font-size:.79rem;">
+            <span style="font-weight:700;color:#dc2626;">${g}</span>
+            <span style="font-family:monospace;color:#dc2626;">${l2fc}${fdr.includes('0.36')?'':' ★'}</span>
+            <span style="font-size:.7rem;color:#64748b;">${fdr}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.65rem 1rem;font-size:.8rem;color:#e2e8f0;line-height:1.55;">
+      <strong style="color:#fbbf24;">The racial disparity is not only AA suppression</strong> — NHW stem cells <em>actively induce</em> the same gap-filling genes under arsenic. The same arsenic provocation drives <strong>opposite outcomes</strong> in the two lines: NHW stem cells upregulate gap-filling and ligation machinery (POLD1, POLE, LIG1, RFC3) while AA stem cells suppress the parallel proteins (POLD2, POLE3, RFC1). This bidirectional divergence under identical arsenic exposure is the mechanistic core of the racial NER disparity.
+    </div>
   </div>`;
 }
 
@@ -692,8 +752,9 @@ function buildDoubleHit() {
   <text x="755" y="96" text-anchor="middle" font-size="9" fill="#64748b">(direct zinc displacement mechanism)</text>
   <text x="755" y="128" text-anchor="middle" font-size="22" fill="#dc2626" filter="url(#glow)">⚗️</text>
   <text x="755" y="150" text-anchor="middle" font-size="10" fill="#374151">p53 suppression → ↓ DDB2, XPC</text>
-  <text x="755" y="164" text-anchor="middle" font-size="10" fill="#374151">ERCC1, CDK7, CCNH, RFC2, RPA3</text>
-  <text x="755" y="178" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="600">Less repair capacity (NES −2.75)</text>
+  <text x="755" y="157" text-anchor="middle" font-size="9.5" fill="#374151">ERCC1, CDK7, CCNH, RFC2, RPA3</text>
+  <text x="755" y="169" text-anchor="middle" font-size="9" fill="#374151">+ COP9 signalosome (COPS3–8)</text>
+  <text x="755" y="181" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="600">Less repair capacity (NES −2.75)</text>
 
   <!-- Context: AA Stem identity -->
   <rect x="315" y="15" width="270" height="180" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="2"/>
@@ -753,7 +814,7 @@ function buildClinical() {
   if (!el) return;
   const cards = [
     {icon:'💊',title:'ERCC1 as Biomarker',col:'#dc2626',bg:'#fee2e2',
-     body:'ERCC1 is already a validated clinical biomarker in non-small cell lung cancer (NSCLC): ERCC1 IHC scoring is used to predict platinum chemotherapy resistance (IALT, JMEN, and TASTE trials established the association; ERCC1-negative tumors benefit more from cisplatin). This same IHC assay — ERCC1 protein detection in formalin-fixed paraffin-embedded tissue — is directly applicable to breast cancer specimens. The finding that ERCC1 mRNA is selectively suppressed in AA breast cancer stem cells under arsenic provides a transcriptomic basis for applying this clinically validated biomarker to a breast cancer disparities context. AA patients with stem cell-enriched tumors and arsenic exposure history may be selectively sensitive to platinum-based regimens (cisplatin, carboplatin) — an immediately actionable therapeutic hypothesis testable in existing tissue biobanks.'},
+     body:'ERCC1 is a validated clinical biomarker in non-small cell lung cancer (NSCLC): ERCC1 IHC scoring predicts platinum chemotherapy resistance (IALT, JMEN, TASTE trials; ERCC1-negative tumors benefit more from cisplatin). The same ERCC1 protein IHC assay is directly applicable to breast cancer specimens. Clinically, high ERCC1 expression is associated with platinum resistance — meaning low ERCC1 is associated with platinum sensitivity.<br><br><strong>Unique finding — ERCC1 is suppressed in both lines under arsenic in the stem compartment:</strong> C7 (NHW Stem vs Parental Arsenic): shrunken L2FC = −0.538, FDR = 0.002 ★. C8 (AA Stem vs Parental Arsenic): shrunken L2FC = −0.469, FDR = 0.009 ★. ERCC1 is the <em>only</em> NER gene suppressed in both AA and NHW stem cells under arsenic — all other NER genes diverge in direction between C7 and C8. This makes ERCC1 a race-independent vulnerability on top of the race-specific NER suppression in AA cells: while the AA-specific signal requires the three-condition combination, ERCC1 suppression itself is universal to the arsenic + stem cell context regardless of racial background.<br><br>Two independent actionable insights: low ERCC1 in stem cell-enriched tumors with arsenic exposure history may predict (1) platinum chemotherapy sensitivity AND (2) elevated susceptibility to arsenic-induced DNA damage accumulation — because the obligate incision endonuclease is reduced, leaving lesions unrepaired.'},
     {icon:'🌍',title:'Environmental Exposure Context',col:'#d97706',bg:'#fff7ed',
      body:'Arsenic exposure is not hypothetical in the study population. In South Florida, water systems in Miami-Dade (ZIP codes 33030–33034, Homestead/Florida City area) and Palm Beach County communities have documented arsenic levels in the 5–15 µg/L range — approaching the EPA maximum contaminant level of 10 µg/L, and exceeding California\'s Public Health Goal of 0.004 µg/L. These same zip codes overlap with communities with elevated proportions of Black/AA residents and elevated Stage III–IV breast cancer incidence in Florida Cancer Data System (FCDS) reporting. The 0.3 µM arsenic dose used in this study (≈22 µg/L as As³⁺) models chronic environmental exposure, not pharmacological dosing. This creates a direct mechanistic link from tap water arsenic → cancer stem cell NER suppression → elevated mutagenic burden in the at-risk population.'},
     {icon:'🧬',title:'Health Disparities Framework',col:'#7c3aed',bg:'#f5f3ff',
@@ -779,25 +840,44 @@ function buildMethods() {
   if (!el) return;
   const sections = [
     {title:'Cell Lines & Arsenic Exposure',content:`
-      <p><strong>BRL-23 (NHW):</strong> Derived from reduction mammoplasty of a premenopausal Non-Hispanic White woman. <strong>BRL-24 (AA):</strong> Same source, premenopausal African American. Both karyotyped — confirmed normal chromosomal content.</p>
-      <p><strong>Arsenic dose:</strong> 0.3 µM arsenite (As³⁺) — corresponding to the LC₁₀ (10% lethal concentration). This models <em>chronic, low-dose environmental exposure</em> rather than therapeutic doses. Stock: 40 mM in PBS, filter-sterilized, fed every other day + 1 hour before harvest. Duration: 14 days (~2–3 population doublings).</p>
+      <p><strong>BRL-23 (NHW):</strong> Derived from non-diseased breast reduction mammoplasty of a premenopausal Non-Hispanic White woman. <strong>BRL-24 (AA):</strong> Same source, premenopausal African American. Both karyotyped — confirmed normal chromosomal content. Cultured in MWRI medium (DMEM + 10% FBS + 10% newborn calf serum + 1% P/S + MEM-NEAA + β-mercaptoethanol + nucleoside stock) in Matrigel-coated flasks at 37°C, 10% CO₂.</p>
+      <p><strong>Arsenic dose:</strong> 0.3 µM arsenite (As³⁺) — the LC₁₀ (10% lethal concentration; Alharbi 2025), consistent with arsenic concentrations in contaminated groundwater. 40 mM stock in PBS, filter-sterilized (0.22 µm), stored at 4°C protected from light. Fed every other day + 1 hour before harvest. Duration: 14 days (~2–3 population doublings). This models <em>chronic, low-dose environmental exposure</em>, not therapeutic dosing.</p>
     `},
     {title:'Cancer Stem Cell Isolation (FACS)',content:`
-      <p><strong>Surface markers:</strong> CD24-FITC (loss → dedifferentiation), CD49f-PE (integrin α6, mammary progenitor marker), CD44-APC (cancer stem cell adhesion receptor). DAPI for viability. Fluorescence-minus-one (FMO) controls for gating.</p>
-      <p><strong>Instrument:</strong> BD FACS Aria cell sorter. <strong>Yield:</strong> 2–5% viable cells, consistent across BRL-23, BRL-24, vehicle, and arsenic conditions. n=3 biological replicates for parental; n=1 per group for stem (sorting yield constraint).</p>
+      <p><strong>Surface markers:</strong> CD24-FITC (loss → dedifferentiation marker), CD49f-PE (integrin α6, mammary progenitor marker), CD44-APC (cancer stem cell adhesion receptor). DAPI for viability exclusion. Fluorescence-minus-one (FMO) controls for gating boundaries on all markers.</p>
+      <p><strong>Instrument:</strong> BD FACS Aria. Cells resuspended in PBS + 2% FBS; antibodies at 4°C for 20 min. Sorted directly into RNAprotect Cell Reagent. <strong>Yield:</strong> 2–5% viable cells, consistent across all four groups. <strong>Replication:</strong> n=3 biological replicates for parental conditions; n=1 per group for stem (sorting yield constraint — DESeq2 borrows variance from parental replicates via empirical Bayes).</p>
     `},
     {title:'RNA Sequencing',content:`
-      <p><strong>Quality:</strong> RIN ≥ 9 all 16 samples, NanoDrop A260/A280: 1.9–2.1. <strong>Library prep:</strong> 150 bp paired-end. <strong>Depth:</strong> 41–72 million read pairs per sample. <strong>Phred scores:</strong> ~33 arsenic-treated parental, ~38 vehicle and stem (separate library batch for stem).</p>
-      <p><strong>Alignment:</strong> STAR aligner, GRCh38 (hg38) + Ensembl release 105, strict paired-end compatibility, minimum 75% read overlap. <strong>Count filter:</strong> ≥10 summed reads across all 16 samples → 16,682 genes in final matrix.</p>
+      <p><strong>Extraction:</strong> miRNeasy Mini Kit (Qiagen) + on-column DNase digestion. All 16 samples achieved RIN ≥ 9; NanoDrop A260/A280: 1.9–2.1. <strong>Library prep:</strong> TruSeq Stranded Total RNA Library Prep Gold (Illumina). <strong>Sequencing:</strong> Illumina NextSeq 2000, 150 bp paired-end, 41–72 million read pairs per sample.</p>
+      <p><strong>QC note:</strong> Arsenic-treated parental samples showed average Phred ~33 vs ~38 for vehicle/stem; stem samples showed elevated %N (0.24% vs 0.01–0.07%), indicating separate library preparation batches. Batch structure was inseparable from treatment groups — standard ComBat correction was not applied; confounding addressed through the full DESeq2 factorial model.</p>
+      <p><strong>Alignment:</strong> STAR aligner, GRCh38 (hg38) + Ensembl release 105. 90–92% alignment rates. Gene counts via featureCounts-equivalent (Partek Flow), requiring strict paired-end compatibility and ≥75% read overlap. <strong>Count filter:</strong> ≥10 summed raw reads across all 16 samples → 16,682 genes. Of these, 1,806 had "---" placeholder symbols (absent HGNC symbols in Ensembl 105); they were retained using Ensembl IDs and contribute to rank positions but do not match any named gene set.</p>
     `},
     {title:'DESeq2 Statistical Model',content:`
-      <p><strong>Model:</strong> Full factorial interaction: <code>~ ethnicity + Treatment + Type + ethnicity×Treatment + ethnicity×Type + Treatment×Type</code>. Reference levels: Vehicle, Parental, NHW.</p>
-      <p><strong>Normalization:</strong> Median-of-ratios (DESeq2 internal). <strong>Shrinkage:</strong> apeglm (adaptive t-prior) on log₂FC — stabilizes estimates for lowly expressed genes and single-replicate stem comparisons. <strong>Significance:</strong> FDR &lt; 0.05 (Benjamini-Hochberg). Variance borrowed from n=3 parental replicates for n=1 stem comparisons via empirical Bayes dispersion estimation.</p>
+      <p><strong>Model:</strong> Full factorial interaction: <code>~ ethnicity + Treatment + Type + ethnicity×Treatment + ethnicity×Type + Treatment×Type</code>. Reference levels: Vehicle, Parental, NHW. The ethnicity×treatment interaction directly tests whether arsenic affects gene expression differently in AA vs NHW cells. 14 pairwise contrasts defined (C1–C12 plus three interaction contrasts).</p>
+      <p><strong>Normalization:</strong> Median-of-ratios (DESeq2 internal): each gene's pseudo-reference = geometric mean across all samples; each sample's size factor = median of count-to-pseudo-reference ratios. This corrects for both library size AND composition — critical when arsenic globally suppresses transcription, which would distort simpler approaches. <strong>Shrinkage:</strong> apeglm adaptive t-prior on log₂FC. <strong>Significance:</strong> FDR &lt; 0.05 (Benjamini-Hochberg). <strong>Variance for n=1 stem conditions:</strong> Borrowed from n=3 parental replicates via empirical Bayes dispersion estimation — the only mechanism enabling statistically valid inference for these comparisons.</p>
+      <p><strong>Why not standard t-tests or ANOVA?</strong> Both assume normally distributed data — a condition violated by RNA-seq count distributions. Neither can accommodate overdispersion nor n=1 conditions. DESeq2 models counts using the negative binomial distribution, appropriate for overdispersed count data.</p>
     `},
-    {title:'GSEA Analysis',content:`
-      <p><strong>Method:</strong> GSEAPreranked v4.4.0. <strong>Rank metric:</strong> −log₁₀(p-value) × sign(shrunken L2FC). <strong>Parameters:</strong> 1,000 permutations, fixed seed 149, weighted enrichment statistic, gene set size 15–500 genes.</p>
-      <p><strong>Databases:</strong> (1) Hallmark (50 curated sets, minimal overlap), (2) KEGG Legacy (mechanistic pathway maps), (3) Reactome (hierarchical pathway annotations), (4) CGP (empirical signatures including KAN_RESPONSE_TO_ARSENIC_TRIOXIDE, BenPorath, Pece). Total: 48 runs (12 comparisons × 4 databases).</p>
-      <p><strong>Significance threshold:</strong> |NES| &gt; 1.5 AND FDR &lt; 0.25 (standard GSEA criterion accounting for multiple testing burden across thousands of pathways).</p>
+    {title:'Why DESeq2 Over CPM Normalization',content:`
+      <p>CPM (Counts Per Million) normalization, used in prior work from this laboratory for simpler two-group designs, corrects only for sequencing depth — not library composition. Because CPM uses the total count sum as denominator, highly expressed genes that dominate the library can distort every other gene's apparent CPM ratio. This composition bias is especially problematic when arsenic globally suppresses transcription.</p>
+      <p><strong>ALDH1A3 direction reversal (the key example):</strong> A parallel CPM analysis reported ALDH1A3 as 7.6-fold <em>lower</em> in AA cells (CPM L2FC = −2.92) in the racial comparison, while DESeq2 identified it as 2.9-fold <em>higher</em> in AA (L2FC = +1.51) — an <strong>opposite-direction error exceeding 4 log₂ units</strong>. The mechanism: VIM, constitutively expressed at ~3,000–4,000 CPM in BRL-23 and higher in BRL-24, dominates the total count denominator differently in the two lines, systematically inflating or deflating apparent CPM ratios. DESeq2's median-of-ratios normalization corrects for this; CPM does not.</p>
+      <p>Composition bias also produces wrong conclusions about the direction of arsenic's effect within a single cell line. In the AA parental arsenic vs. vehicle comparison (C4), CPM reported ALDH1A3 as induced by arsenic (log₂ fold change = +1.45), while DESeq2 reported it as suppressed (log₂ fold change = −1.29). ALDH1A3 is an established breast cancer stem cell marker and the sign of arsenic's effect on it is a biologically significant question — CPM's composition bias reversed the conclusion entirely. DESeq2's size-factor normalization, which accounts for the global suppression of transcription that shifts the CPM denominator, correctly identifies suppression where CPM falsely reports induction.</p>
+      <p><strong>Within-line comparisons:</strong> CPM and DESeq2 are directionally consistent for most within-line arsenic comparisons (e.g., SMO: CPM −0.76 vs DESeq2 −1.12 in NHW; KLF4: CPM −1.23 vs DESeq2 −1.38), reflecting that within-line comparisons using the same total read count denominator are less susceptible to composition distortion.</p>
+      <p><strong>NER genes in C8:</strong> CPM and DESeq2 are directionally identical for all 23 NER genes in the C8-equivalent comparison — the NER suppression signal is present in both normalizations at the individual gene level. The critical failure of CPM is not gene-level direction but its inability to generate a statistical framework, factorial model, or GSEA pathway analysis.</p>
+      <p><strong>Stem cell comparisons:</strong> Every stem cell comparison in CPM analysis contained only a single sample per group — making t-tests impossible and leaving all stem cell comparisons without p-values or any statistical framework. DESeq2's empirical Bayes dispersion imputation is the only mechanism making statistically valid inference possible for n=1 stem conditions.</p>
+      <p><strong>NER gene list coverage:</strong> The parallel 54-gene CPM analysis contained no NER pathway genes — not a single member of KEGG_NUCLEOTIDE_EXCISION_REPAIR was included. Individual NER genes change by only 1.2- to 1.8-fold under arsenic, too small to attract attention in gene-by-gene CPM review and too subtle for individual DEG significance after 16,682-gene multiple testing correction. The NER finding depends entirely on GSEA detecting coordinated clustering of sub-threshold genes — structurally invisible to any gene-list CPM analysis.</p>
+    `},
+    {title:'GSEA Analysis: GSEAPreranked vs. Alternatives',content:`
+      <p><strong>Method:</strong> GSEAPreranked v4.4.0. <strong>Rank metric:</strong> −log₁₀(p-value) × sign(shrunken L2FC). Genes with p=0 assigned ±300. <strong>Parameters:</strong> No_Collapse (HGNC symbols already match MSigDB format), 1,000 permutations, fixed seed 149, weighted enrichment statistic, gene set size 15–500 genes. All 16,682 genes retained — no intermediate filtering.</p>
+      <p><strong>Why not Partek Flow built-in GSEA?</strong> Partek's built-in GSEA requires exactly two factor levels and cannot accommodate a multi-factor interaction model. Empirically confirmed: when run on DESeq2-normalized counts across collapsed two-group comparisons, KEGG_NUCLEOTIDE_EXCISION_REPAIR showed no significant enrichment (best: NES = −1.31, FDR = 0.38 in Stem vs. Parental) vs. NES = −2.75, FDR = 0.18 from GSEAPreranked. On CPM-normalized counts: NES = −0.56, FDR = 1.00. The primary finding is entirely absent from both Partek GSEA runs — collapsing all racial backgrounds and arsenic conditions into a single Stem vs. Parental comparison averages the AA-specific, arsenic-dependent signal into noise.</p>
+      <p><strong>Why not Partek Gene Set Enrichment (Fisher's exact)?</strong> When Partek's Gene Set Enrichment function (Fisher's exact test) was applied to the unfiltered all-gene dataset, it returned a rich factor of 1.0 for KEGG_NUCLEOTIDE_EXCISION_REPAIR — meaning all 46 NER pathway genes were present in the input list. The result was a highly significant p-value (3.2×10⁻⁹) that is entirely uninformative: it simply confirms that NER genes exist in the dataset, with no information about direction, condition-specificity, or coordinated suppression. A rich factor of 1.0 means the "enrichment" test has no discriminatory power whatsoever.</p>
+      <p><strong>Gene Set ANOVA comparison:</strong> Gene Set ANOVA requires within-group replicates and cannot be applied to n=1 stem comparisons (C5–C12). On parental comparisons: NER main effect p = 0.80 (AA vs. NHW) and p = 0.49 (arsenic vs. vehicle); modestly significant in Stem vs. Parental (p = 0.011, FDR = 0.034). Disruption p-value (gene patterning within pathway) was extraordinarily significant in every comparison (Stem vs. Parental: p &lt; 10⁻¹⁸; AA vs. NHW: p &lt; 10⁻¹⁵) — confirming genuine NER disruption but without the directional or condition-specific resolution to identify the AA + arsenic + stem cell combination as the driver. <strong>CPM inflation:</strong> When Gene Set ANOVA was applied to CPM-normalized counts instead of DESeq2-normalized counts, 496 pathways reached significance (p &lt; 0.05) across all three comparisons versus 344 for DESeq2 — a 44% inflation in significant hits. NER appeared spuriously significant in the CPM AA vs. NHW comparison (p = 0.049) despite a log₂ fold change of essentially zero (−0.003), a false positive with no directional meaning generated by composition bias.</p>
+      <p><strong>No intermediate filtering between DESeq2 and GSEA:</strong> All 16,682 genes retained. The most common GSEA error is pre-filtering to significant DEGs — this defeats the method's purpose. The NER finding depends entirely on retaining sub-threshold genes. The rank metric itself encodes significance: a non-significant gene naturally ranks near the middle where it contributes almost nothing to any enrichment score.</p>
+    `},
+    {title:'Database Selection Rationale',content:`
+      <p><strong>Hallmark (50 gene sets):</strong> Quality filter — computationally derived from thousands of overlapping literature gene sets, collapsed into 50 well-validated biological programs with minimal redundancy. Robust by construction. Has no NER gene set (too mechanistically specific for broad program-level curation), so cannot directly confirm the primary NER finding but provides context for stemness, EMT, OxPhos, and inflammatory programs.</p>
+      <p><strong>KEGG Legacy:</strong> Mechanistic biochemical pathway maps with separate gene sets for NER, BER, MMR, and HR — the correct biochemical resolution to detect a specific NER suppression signal. KEGG_NUCLEOTIDE_EXCISION_REPAIR was the primary finding database.</p>
+      <p><strong>Reactome:</strong> Independent confirmation and mechanistic granularity. Hierarchical annotation separates NER into sub-pathway steps; agreement between KEGG (NES = −2.75) and Reactome (NES = −2.68) in C8 — built by different groups using different curation methods — is strong evidence against a gene-set-definition artifact. Reactome also identified COP9 signalosome suppression (COPS3–8), extending the impairment upstream of damage recognition.</p>
+      <p><strong>CGP (Chemical and Genetic Perturbations):</strong> Empirical signatures from published perturbation experiments. KAN_RESPONSE_TO_ARSENIC_TRIOXIDE (from an actual arsenic exposure experiment) enabled cross-study validation that arsenic-exposed cells activated programs consistent with published arsenic responses. CGP also contains BenPorath and Pece stem cell signatures used to validate sorted population identity.</p>
     `},
     {title:'RNA-Seq Quality Control', content:`<div id="qc-table-wrap-inner"><p style="color:#64748b;font-size:.83rem;">Loading QC data…</p></div>`},
   ];
@@ -870,7 +950,7 @@ function buildLimitations() {
     {icon:'⚠️',title:'n=1 for stem cell conditions',desc:'Sorting yield constraints prevented biological replication of stem cell samples. DESeq2 borrows variance from n=3 parental replicates via empirical Bayes — but three-way interaction effects cannot be formally tested. Replication with n≥3 stem replicates is the top priority next step.'},
     {icon:'⚠️',title:'Two cell lines as racial proxies',desc:'BRL-23 (NHW) and BRL-24 (AA) are single donors from reduction mammoplasties. While their karyotypes are normal, results should be replicated in additional NHW and AA cell lines and, ultimately, primary patient-derived samples.'},
     {icon:'⚠️',title:'Transcriptional abundance ≠ protein function',desc:'RNA-seq measures transcript levels — not protein expression, protein activity, or actual NER lesion removal kinetics. ERCC1 mRNA suppression implies reduced NER capacity but requires validation with functional assays (e.g., host-cell reactivation, comet assay, immunofluorescent ERCC1/XPC foci).'},
-    {icon:'⚠️',title:'Mechanism of baseline NER differences unexplained',desc:'Why do AA stem cells have lower NER expression at baseline (C5/C6, before arsenic) versus NHW stem cells? Epigenetic mechanisms (CpG methylation of XPC, DDB1, ERCC1 promoters) are suspected but not yet investigated in this dataset.'},
+    {icon:'⚠️',title:'Mechanism of baseline NER differences unexplained',desc:'Why do AA stem cells have lower baseline NER gene expression than NHW stem cells (reflected across C5–C8)? The leading hypothesis is a self-reinforcing epigenetic cycle: arsenic disrupts DNA methylation patterns at NER gene promoters → CpG hypermethylation silences XPC and ERCC1 → reduced NER capacity allows further DNA damage → impaired repair perpetuates the suppressed state across cell generations. This cycle is consistent with arsenic\'s well-documented role as a DNA methyltransferase disruptor and the known regulation of XPC expression by CpG methylation of its promoter. Critically, ERCC1 is already suppressed at baseline across all comparisons involving the stem compartment (C5–C8, shrunken L2FC range −0.44 to −0.67) — a pattern that spans conditions rather than tracking with any single arsenic treatment. This argues the AA stem cells enter the experiment in a fundamentally different NER-competent state, not simply that arsenic acutely suppresses ERCC1 in real time. CpG methylation profiling of XPC and ERCC1 promoters in BRL-24 vs. BRL-23 stem cells is the highest-priority mechanistic experiment this dataset demands.'},
   ];
   const futures = [
     'Functional NER capacity assays in BRL-23 and BRL-24 stem cells: host-cell reactivation, comet assay, cyclobutane pyrimidine dimer (CPD) immunofluorescence',
