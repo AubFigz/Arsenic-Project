@@ -184,14 +184,65 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   .section,.enh-section{padding:.8rem 0!important;}
   a{color:#000!important;text-decoration:none!important;}
   @page{margin:1.8cm;size:A4;}
+  .no-print,#nav-hamburger,#site-toast,#cite-modal{display:none!important;}
+  .limits-callout{border:1px solid #ccc!important;background:#fff!important;}
 }
+/* ── Accessibility: keyboard focus rings ────────────────── */
+:focus-visible{outline:2px solid #1d4ed8;outline-offset:2px;border-radius:4px;}
+nav .links a:focus-visible,.btn:focus-visible,.nav-drop-btn:focus-visible{outline:2px solid #1d4ed8;outline-offset:3px;}
+/* ── Mobile hamburger navigation ─────────────────────────── */
+#nav-hamburger{display:none;background:transparent;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.3rem .6rem;border-radius:6px;}
+#nav-hamburger:hover{background:var(--blue-lt);}
+@media (max-width:960px){
+  nav{padding:0 1rem;}
+  #nav-hamburger{display:block;}
+  nav .links{position:fixed;top:56px;right:0;left:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 6px 20px rgba(0,0,0,.1);padding:.6rem 1rem;gap:.1rem;max-height:calc(100vh - 56px);overflow-y:auto;transform:translateY(-110%);transition:transform .22s ease-out;align-items:stretch;}
+  nav .links.open{transform:translateY(0);}
+  nav .links a{padding:.75rem 1rem;font-size:.95rem;border-radius:8px;}
+  .nav-dropdown{width:100%;}
+  .nav-drop-btn{width:100%;text-align:left;padding:.75rem 1rem;font-size:.95rem;}
+  .nav-drop-menu{position:static;box-shadow:none;border:none;background:#f8fafc;margin-top:.2rem;}
+}
+/* ── Limitations callout (elevated) ──────────────────────── */
+.limits-callout{background:linear-gradient(135deg,#fef3c7 0%,#fed7aa 100%);border:2px solid #d97706;border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(217,119,6,.15);}
+.limits-callout-badge{display:inline-block;background:#d97706;color:#fff;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.25rem .65rem;border-radius:12px;margin-bottom:.6rem;}
+.limits-callout-title{font-size:1.05rem;font-weight:700;color:#7c2d12;margin-bottom:.4rem;}
+.limits-callout-body{font-size:.88rem;line-height:1.55;color:#78350f;}
+.limits-callout-body strong{color:#451a03;}
+/* ── Version / timestamp footer ──────────────────────────── */
+#site-version{background:#0f172a;color:#94a3b8;padding:1rem 2rem;text-align:center;font-size:.74rem;letter-spacing:.02em;}
+#site-version .sv-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;}
+#site-version a{color:#93c5fd;}
+#site-version .sv-left,#site-version .sv-right{display:flex;gap:1rem;flex-wrap:wrap;}
+/* ── Citation helper button + modal ──────────────────────── */
+.cite-btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;}
+.cite-btn{padding:.45rem 1rem;font-size:.78rem;font-weight:600;border-radius:6px;border:1px solid rgba(147,197,253,.4);background:rgba(255,255,255,.08);color:#cbd5e1;cursor:pointer;font-family:inherit;transition:all .15s;}
+.cite-btn:hover{background:rgba(147,197,253,.18);color:#fff;border-color:#93c5fd;}
+#site-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:.7rem 1.3rem;border-radius:8px;font-size:.85rem;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .22s;z-index:999;}
+#site-toast.show{opacity:1;}
+/* ── Paper-link button in header ─────────────────────────── */
+.paper-link-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .9rem;background:#fff;color:#1e3a5f;font-size:.82rem;font-weight:600;border-radius:8px;margin-top:.8rem;transition:all .15s;text-decoration:none;}
+.paper-link-btn:hover{background:#dbeafe;transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+/* ── Authors block ───────────────────────────────────────── */
+#authors-block{background:#f8fafc;border-top:1px solid var(--border);padding:2rem 2rem;}
+#authors-block .ab-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;}
+#authors-block h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.5rem;}
+#authors-block p{font-size:.88rem;color:var(--text);line-height:1.6;}
+#authors-block a{color:var(--blue);}
+/* ── Data download card ──────────────────────────────────── */
+.dl-card{background:#ecfdf5;border:1px solid #10b981;border-radius:10px;padding:1.1rem 1.3rem;margin:1rem 0;}
+.dl-card h4{font-size:.85rem;font-weight:700;color:#065f46;margin-bottom:.35rem;}
+.dl-card p{font-size:.78rem;color:#047857;margin-bottom:.6rem;line-height:1.5;}
+.dl-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:#10b981;color:#fff;font-size:.8rem;font-weight:600;border-radius:6px;text-decoration:none;transition:all .15s;}
+.dl-btn:hover{background:#059669;transform:translateY(-1px);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo"><span class="dot"></span> Arsenic &amp; Breast Cancer Explorer</div>
-  <div class="links">
+  <button id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links" onclick="toggleHamburgerNav(this)">&#9776;</button>
+  <div class="links" id="nav-links">
     <a href="#overview">Overview</a>
     <a href="#stem-val">Stem</a>
     <a href="#heatmap">Heatmap</a>
@@ -284,6 +335,10 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
     </div>
     <div style="margin-top:1rem;padding:.7rem 1rem;background:rgba(255,255,255,.08);border-left:3px solid #fbbf24;border-radius:6px;font-size:.82rem;line-height:1.55;color:#f1f5f9;">
       <strong style="color:#fbbf24;">Provenance:</strong> BRL-23 and BRL-24 were originally established and karyotyped in the Latimer laboratory (UPMC IRB 0609002). The 0.3 &mu;M ATO LC<sub>10</sub> dose, MWRI medium formulation, and 40 mM ATO stock protocol were previously characterized on the parental lines by Yousef (2025) and Alharbi (2025). The CD24&minus;/CD49f+/CD44+ CSC-like flow sort and the transcriptomic comparisons reported here were performed in the present study and were <em>not</em> part of the prior published work, which analyzed unsorted parental cultures only.
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap;">
+      <a href="FINAL_Arsenic_Paper_SUBMISSION_READY.docx" class="paper-link-btn" aria-label="Download the paper (Word document)">&#128196; Read the paper</a>
+      <button class="paper-link-btn" style="border:none;cursor:pointer;font-family:inherit;" onclick="openCiteModal()" aria-label="Cite this work">&#10070; Cite this work</button>
     </div>
   </div>
 </div>
@@ -432,8 +487,8 @@ nav .links a:hover,.nav-active{background:var(--blue-lt)!important;color:var(--b
   </div>
   <div id="stem-val-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:1.5rem;"></div>
   <div class="card">
-    <h3 style="font-size:.9rem;font-weight:700;margin-bottom:.3rem;">Principal Component Analysis (Simulated from Paper)</h3>
-    <p style="font-size:.79rem;color:var(--text2);margin-bottom:.5rem;">PC1 (81% variance) separates stem (right) from parental (left). PC2 separates AA (top) from NHW (bottom). Note: n=1 for stem cell groups; n=3 for parental. Stem cells under arsenic show maximum AA/NHW divergence.</p>
+    <h3 style="font-size:.9rem;font-weight:700;margin-bottom:.3rem;">Principal Component Analysis &mdash; Schematic</h3>
+    <p style="font-size:.79rem;color:var(--text2);margin-bottom:.5rem;">Schematic of the four-group separation reported in Supplementary Figure S2 of the paper. PC1 (~81% variance) separates stem (right) from parental (left). PC2 separates AA (top) from NHW (bottom). Note: n=1 for stem cell groups; n=3 for parental. Stem cells under arsenic show maximum AA/NHW divergence. A full per-sample PCA rendered from DESeq2 rlog counts is available in Supplementary Figure S2 of the manuscript.</p>
     <div id="pca-plot"></div>
   </div>
 </div>
@@ -1850,6 +1905,11 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
     <h2>Study Limitations &amp; Future Directions</h2>
     <p>Honest assessment of current study constraints and the five highest-priority validation experiments needed to extend these findings toward clinical translation.</p>
   </div>
+  <div class="limits-callout">
+    <span class="limits-callout-badge">Key limitation</span>
+    <div class="limits-callout-title">Stem cell conditions sampled at n = 1 per group</div>
+    <div class="limits-callout-body">Biological replicates for the four CD24&minus;/CD49f+/CD44+ sorted stem cell groups (NHW Vehicle, NHW Arsenic, AA Vehicle, AA Arsenic) are <strong>n = 1</strong> per group due to flow-sorting yield constraints. Stem-cell contrasts (C5&ndash;C12) therefore borrow variance via DESeq2 empirical-Bayes dispersion shrinkage from the n = 3 parental conditions rather than estimating it directly. The NER finding is statistically supported and directionally corroborated by two independent databases (KEGG and Reactome), but the three-way interaction (Race &times; Treatment &times; Cell Type) is not independently powered. Functional follow-up and additional stem-cell replicates are the primary validation requirements.</div>
+  </div>
   <div id="limits-wrap"></div>
   <div style="margin-top:1.5rem;padding:1rem;background:#f0f4f8;border-radius:8px;font-size:.79rem;color:var(--text2);text-align:center;">
     Data: DESeq2 full factorial interaction model (16,682 genes &times; 12 comparisons) &bull; GSEAPreranked v4.4.0, 4 MSigDB databases, 48 runs &bull; BRL-23 (NHW) &amp; BRL-24 (AA) breast tissue-derived cell lines
@@ -1857,16 +1917,56 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
 </div>
 </div>
 
+<!-- AUTHORS / INSTITUTION BLOCK -->
+<div id="authors-block">
+  <div class="ab-inner">
+    <div>
+      <h3>Authors</h3>
+      <p>Aubrey Morales<sup>1</sup>, and collaborators.<br><em style="color:var(--text2);font-size:.8rem;">Author list to be finalized at submission.</em></p>
+    </div>
+    <div>
+      <h3>Institution</h3>
+      <p><sup>1</sup> Latimer Laboratory<br>Institutional affiliation to be added.</p>
+    </div>
+    <div>
+      <h3>Correspondence</h3>
+      <p><a href="mailto:aubreymorales1989@gmail.com">aubreymorales1989@gmail.com</a></p>
+    </div>
+    <div>
+      <h3>Funding &amp; Acknowledgments</h3>
+      <p style="font-size:.82rem;color:var(--text2);">To be added upon submission. Data are derived from 16 paired-end RNA-sequencing samples processed through DESeq2 + GSEAPreranked. All data-processing code is available on request.</p>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOADABLE DATA BUNDLE -->
+<div style="background:#fff;border-top:1px solid var(--border);padding:2rem;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="dl-card">
+      <h4>&#128229; Downloadable Supplementary Data</h4>
+      <p>All 12 DESeq2 contrast tables, 48 GSEA result tables, leading-edge gene inventories, and sample metadata are bundled with the manuscript as Supplementary Tables S1&ndash;S3 and Supplementary Data S1.</p>
+      <a href="FINAL_Arsenic_Paper_SUBMISSION_READY.docx" class="dl-btn" aria-label="Download paper including supplementary references">&#128196; Paper (.docx)</a>
+      <span style="font-size:.74rem;color:#047857;margin-left:.8rem;">Supplementary data tables: contact corresponding author or see journal supplementary materials upon publication.</span>
+    </div>
+  </div>
+</div>
+
 <!-- CITATION CARD -->
 <div style="background:linear-gradient(135deg,#1e1b4b 0%,#172554 100%);color:#e2e8f0;padding:2.5rem 2rem;">
   <div style="max-width:1200px;margin:0 auto;">
     <h2 style="font-size:1.1rem;font-weight:700;color:#93c5fd;margin-bottom:1rem;">Cite This Work</h2>
-    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1.2rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;color:#cbd5e1;margin-bottom:.9rem;">
-      [Authors]. (2026). Arsenic trioxide unmasks selective suppression of nucleotide excision repair in African American breast cancer stem-like cells: a transcriptome-wide study.
+    <div id="cite-apa" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1.2rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;color:#cbd5e1;margin-bottom:.9rem;">
+      Morales, A. et al. (2026). Arsenic trioxide unmasks selective suppression of nucleotide excision repair in African American breast cancer stem-like cells: a transcriptome-wide study.
       <em style="color:#93c5fd;">Journal TBD</em>.
       DOI: <span style="color:#fbbf24;">[Pending publication]</span>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;font-size:.79rem;color:#94a3b8;">
+    <div class="cite-btns">
+      <button class="cite-btn" onclick="copyCite('apa')" aria-label="Copy APA citation to clipboard">Copy APA</button>
+      <button class="cite-btn" onclick="copyCite('mla')" aria-label="Copy MLA citation to clipboard">Copy MLA</button>
+      <button class="cite-btn" onclick="copyCite('chicago')" aria-label="Copy Chicago citation to clipboard">Copy Chicago</button>
+      <button class="cite-btn" onclick="copyCite('bibtex')" aria-label="Copy BibTeX citation to clipboard">Copy BibTeX</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;font-size:.79rem;color:#94a3b8;margin-top:1.2rem;">
       <div><span style="color:#93c5fd;font-weight:600;">Dataset:</span> DESeq2 · 16,682 genes · 12 comparisons</div>
       <div><span style="color:#93c5fd;font-weight:600;">GSEA:</span> GSEAPreranked v4.4.0 · 4 MSigDB databases · 48 runs</div>
       <div><span style="color:#93c5fd;font-weight:600;">Cell lines:</span> BRL-23 (NHW) &amp; BRL-24 (AA) mammoplasty-derived</div>
@@ -1874,6 +1974,25 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
     </div>
   </div>
 </div>
+
+<!-- VERSION / TIMESTAMP FOOTER -->
+<div id="site-version">
+  <div class="sv-inner">
+    <div class="sv-left">
+      <span>Site version 1.1</span>
+      <span>&middot;</span>
+      <span>Synced to paper revision 2026-04-23</span>
+    </div>
+    <div class="sv-right">
+      <a href="FINAL_Arsenic_Paper_SUBMISSION_READY.docx">Read the paper</a>
+      <span>&middot;</span>
+      <a href="#overview">Back to top</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST + CITATION MODAL -->
+<div id="site-toast" role="status" aria-live="polite"></div>
 
 <!-- METHODS FAB -->
 <a href="#methods" id="methods-fab">&#128203; Methods</a>
@@ -1897,5 +2016,67 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(loadURLHash,3
 <script src="animations.js"></script>
 <script src="viz2.js"></script>
 <script src="leading_edge.js"></script>
+<script>
+/* ── Mobile hamburger toggle ─────────────────────────────── */
+function toggleHamburgerNav(btn){
+  var links = document.getElementById('nav-links');
+  if(!links) return;
+  var isOpen = links.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+/* Close mobile nav when a link inside is clicked */
+document.addEventListener('click', function(e){
+  var links = document.getElementById('nav-links');
+  var ham = document.getElementById('nav-hamburger');
+  if(!links || !ham) return;
+  if(window.innerWidth <= 960 && e.target.tagName === 'A' && links.contains(e.target)){
+    links.classList.remove('open');
+    ham.setAttribute('aria-expanded','false');
+  }
+});
+/* ── Toast ───────────────────────────────────────────────── */
+function showToast(msg){
+  var t = document.getElementById('site-toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+/* ── Citation helpers ────────────────────────────────────── */
+var CITATIONS = {
+  apa: "Morales, A., et al. (2026). Arsenic trioxide unmasks selective suppression of nucleotide excision repair in African American breast cancer stem-like cells: a transcriptome-wide study. Journal TBD. DOI: [Pending publication]",
+  mla: "Morales, Aubrey, et al. \"Arsenic Trioxide Unmasks Selective Suppression of Nucleotide Excision Repair in African American Breast Cancer Stem-Like Cells: A Transcriptome-Wide Study.\" Journal TBD, 2026.",
+  chicago: "Morales, Aubrey, et al. \"Arsenic Trioxide Unmasks Selective Suppression of Nucleotide Excision Repair in African American Breast Cancer Stem-Like Cells: A Transcriptome-Wide Study.\" Journal TBD (2026).",
+  bibtex: "@article{morales2026arsenic,\n  title   = {Arsenic trioxide unmasks selective suppression of nucleotide excision repair in African American breast cancer stem-like cells: a transcriptome-wide study},\n  author  = {Morales, Aubrey and others},\n  journal = {Journal TBD},\n  year    = {2026}\n}"
+};
+function copyCite(style){
+  var text = CITATIONS[style] || CITATIONS.apa;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(
+      function(){ showToast(style.toUpperCase() + ' citation copied to clipboard'); },
+      function(){ fallbackCopy(text, style); }
+    );
+  } else {
+    fallbackCopy(text, style);
+  }
+}
+function fallbackCopy(text, style){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast(style.toUpperCase() + ' citation copied'); }
+  catch(e){ showToast('Copy failed — please select manually'); }
+  document.body.removeChild(ta);
+}
+function openCiteModal(){
+  var el = document.getElementById('cite-apa');
+  if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); }
+  copyCite('apa');
+}
+</script>
 </body>
 </html>
